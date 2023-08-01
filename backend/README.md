@@ -2,7 +2,7 @@
 
 ## Database Schema Design
 
-`<insert database schema design here>`
+![image](https://github.com/ant-hoang/AntBnB-Project/assets/105393737/86d444e9-9ad8-4e33-81d7-60d275647cb7)
 
 ## API Documentation
 
