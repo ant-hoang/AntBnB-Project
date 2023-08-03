@@ -2,7 +2,7 @@
 
 ## Database Schema Design
 
-![image](https://github.com/ant-hoang/AntBnB-Project/assets/105393737/86d444e9-9ad8-4e33-81d7-60d275647cb7)
+![Ant_BnB Schema (2)](https://github.com/ant-hoang/AntBnB-Project/assets/105393737/7ae34ec5-9e81-4c98-b195-ceccd23bc0b7)
 
 ## API Documentation
 
@@ -91,7 +91,7 @@ information.
 * Require Authentication: false
 * Request
   * Method: GET
-  * URL: /users/logins
+  * URL: /users/login
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -157,7 +157,7 @@ user's information.
 * Require Authentication: false
 * Request
   * Method: POST
-  * URL: /users/logins
+  * URL: /users/signup
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -327,7 +327,7 @@ Returns the details of a spot specified by its id.
 * Require Authentication: false
 * Request
   * Method: GET
-  * URL: /spots/:spotId/details
+  * URL: /spots/:spotId
   * Body: none
 
 * Successful Response
