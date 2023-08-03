@@ -1,4 +1,4 @@
-// Imports -- External
+// *Imports -- External
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -7,14 +7,16 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 require('express-async-errors');
 
-// Imports -- Internal
+// *Imports -- Internal
 const { environment } = require('./config');
+const routes = require('./routes');
+
 const isProduction = environment === 'production';
 
-// Initialize the app
+// *Initialize the app
 const app = express();
 
-// Use all global middleware
+// *Use all global middleware
 app.use(morgan('dev')); // logging
 
 // converts json req bodies into parsed objects attached to req.body
@@ -45,8 +47,10 @@ app.use(
   })
 );
 
-// Routes
+// *Routes
+app.use(routes);
 
-// Error handling middleware
+// *Error handling middleware
 
-// Exports
+// *Exports
+module.exports = app;
