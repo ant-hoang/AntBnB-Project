@@ -2,14 +2,14 @@
 const express = require('express')
 const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
-
+const { validateLogin } = require('../../utils/validators/users')
 const { setTokenCookie, restoreUser } = require('../../utils/auth');
 const { User } = require('../../db/models');
 
 const router = express.Router();
 
 // POST -> /api/session
-router.post('/', async (req, res, next) => {
+router.post('/', validateLogin, async (req, res, next) => {
     const { credential, password } = req.body;
 
     const user = await User.unscoped().findOne({
