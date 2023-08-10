@@ -67,7 +67,7 @@ router.delete('/', (_req, res) => {
 );
 
 // Get current user
-router.get('/', (req, res) => {
+router.get('/me', (req, res) => {
   const { user } = req;
   if (user) {
     const safeUser = user.toSafeUser()
