@@ -5,9 +5,9 @@ const usersRouter = require('./users.js');
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth.js');
 const { User } = require('../../db/models');
 
-
+// All newly created routes must flow through here!!
 router.use(restoreUser);
-router.use('/session', sessionRouter);
+// router.use('/session', sessionRouter);
 router.use('/users', usersRouter);
 
 
