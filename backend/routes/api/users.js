@@ -22,7 +22,7 @@ router.post('/signup', validateSignup, async (req, res) => {
   return res.json({
     user: safeUser
   });
-  
+
 }
 );
 
@@ -64,7 +64,7 @@ router.post('/login', validateLogin, async (req, res, next) => {
 // logs out current session
 
 // Get current user
-router.get('/me', (req, res) => {
+router.get('/me', requireAuth, (req, res) => {
   const { user } = req;
   if (user) {
     const safeUser = user.toSafeUser()
