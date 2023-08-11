@@ -22,6 +22,7 @@ router.post('/signup', validateSignup, async (req, res) => {
   return res.json({
     user: safeUser
   });
+  
 }
 );
 
@@ -61,11 +62,6 @@ router.post('/login', validateLogin, async (req, res, next) => {
 );
 
 // logs out current session
-router.delete('/', (_req, res) => {
-  res.clearCookie('token');
-  return res.json({ message: 'success' });
-}
-);
 
 // Get current user
 router.get('/me', (req, res) => {
@@ -78,6 +74,12 @@ router.get('/me', (req, res) => {
   } else {
     return res.json({ user: null });
   }
+}
+);
+
+router.delete('/', (_req, res) => {
+  res.clearCookie('token');
+  return res.json({ message: 'success' });
 }
 );
 
