@@ -8,6 +8,7 @@ const { User } = require('../../db/models');
 
 const router = express.Router();
 
+/*
 // POST -> /api/session
 router.post('/', validateLogin, async (req, res, next) => {
     const { credential, password } = req.body;
@@ -43,13 +44,14 @@ router.post('/', validateLogin, async (req, res, next) => {
   }
 );
 
+
 router.delete('/', (_req, res) => {
     res.clearCookie('token');
     return res.json({ message: 'success' });
   }
 );
 
-// Restore session user
+// Get current user
 router.get('/', (req, res) => {
     const { user } = req;
     if (user) {
@@ -65,3 +67,4 @@ router.get('/', (req, res) => {
 
 
 module.exports = router;
+*/

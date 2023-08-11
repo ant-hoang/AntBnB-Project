@@ -14,10 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     toSafeUser() {
       return {
         id: this.id,
-        email: this.email,
-        username: this.username,
         firstName: this.firstName,
-        lastName: this.lastName
+        lastName: this.lastName,
+        email: this.email,
+        username: this.username
       }
     }
 

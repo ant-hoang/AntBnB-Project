@@ -90,7 +90,7 @@ information.
 
 * Require Authentication: false
 * Request
-  * Method: GET
+  * Method: POST
   * URL: /users/login
   * Headers:
     * Content-Type: application/json

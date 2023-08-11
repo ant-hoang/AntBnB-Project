@@ -33,6 +33,8 @@ const setTokenCookie = (res, user) => {
   return token;
 };
 
+// this runs when a user exits out of the session 
+// and returns back in the later future
 const restoreUser = (req, res, next) => {
   // token parsed from cookies
   const { token } = req.cookies;
