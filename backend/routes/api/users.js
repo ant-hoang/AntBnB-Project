@@ -10,9 +10,24 @@ const { User } = require('../../db/models');
 const router = express.Router();
 
 // Sign up
-router.post('/signup', validateSignup, async (req, res) => {
+// create validations to throw an error when
+// credentials created is only white space
+router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
+
+  // create conditionals here
+  // if (username.includes(' ') || 
+  //     firstName.includes(' ') || 
+  //     lastName.includes(' ')) {
+
+  //   const err = new Error('Account creation failed');
+  //   err.status = 401;
+  //   err.title = 'Account creation failed';
+  //   err.errors = { message: 'The provided credentials were invalid.' };
+  //   return next(err);
+  // }
+
   const user = await User.create({ email, username, hashedPassword, firstName, lastName });
 
   const safeUser = user.toSafeUser()
@@ -61,7 +76,6 @@ router.post('/login', validateLogin, async (req, res, next) => {
 }
 );
 
-// logs out current session
 
 // Get current user
 router.get('/me', requireAuth, (req, res) => {
@@ -77,6 +91,8 @@ router.get('/me', requireAuth, (req, res) => {
 }
 );
 
+// logs out current session
+// debating to add /me into the route
 router.delete('/', (_req, res) => {
   res.clearCookie('token');
   return res.json({ message: 'success' });
