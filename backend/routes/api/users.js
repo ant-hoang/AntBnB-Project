@@ -16,27 +16,23 @@ router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
 
-  // create conditionals here
-  // if (username.includes(' ') || 
-  //     firstName.includes(' ') || 
-  //     lastName.includes(' ')) {
-
-  //   const err = new Error('Account creation failed');
-  //   err.status = 401;
-  //   err.title = 'Account creation failed';
-  //   err.errors = { message: 'The provided credentials were invalid.' };
-  //   return next(err);
-  // }
-
-  const user = await User.create({ email, username, hashedPassword, firstName, lastName });
-
-  const safeUser = user.toSafeUser()
-
-  await setTokenCookie(res, safeUser);
-
-  return res.json({
-    user: safeUser
-  });
+  try {
+    const user = await User.create({ email, username, hashedPassword, firstName, lastName });
+  
+    const safeUser = user.toSafeUser()
+  
+    await setTokenCookie(res, safeUser);
+  
+    return res.json({
+      user: safeUser
+    });
+  } catch (e) {
+    const err = new Error('Account creation failed');
+    err.status = 401;
+    err.title = 'Account creation failed';
+    err.errors = { message: 'Please check all fields match the required parameters.' };
+    return next(err);
+  }
 
 }
 );
