@@ -17,8 +17,9 @@ router.post('/signup', validateSignup, async (req, res, next) => {
   const hashedPassword = bcrypt.hashSync(password);
 
   try {
+
     const user = await User.create({ email, username, hashedPassword, firstName, lastName });
-  
+    
     const safeUser = user.toSafeUser()
   
     await setTokenCookie(res, safeUser);
@@ -26,6 +27,8 @@ router.post('/signup', validateSignup, async (req, res, next) => {
     return res.json({
       user: safeUser
     });
+
+    // Fail-safe in case anything goes wrong
   } catch (e) {
     const err = new Error('Account creation failed');
     err.status = 401;
