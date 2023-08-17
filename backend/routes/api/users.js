@@ -8,6 +8,7 @@ const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
 
 const router = express.Router();
+const userRouter = express.Router();
 
 // Sign up
 router.post('/signup', validateSignup, async (req, res) => {
@@ -83,4 +84,6 @@ router.delete('/', (_req, res) => {
 }
 );
 
-module.exports = router
+router.get('/me/spots')
+
+module.exports = router, userRouter
