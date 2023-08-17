@@ -33,9 +33,24 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       validate: {
         len: [4, 30],
+        notEmpty: true,
+        notContains: ' ',
         isNotEmail(value) {
           if (Validator.isEmail(value)) {
             throw new Error("Cannot be an email.");
+          }
+        },
+        mustContainLetter(value) {
+          const alpha = 'abcdefghijklmnopqrstuvwxyz'
+          let hasAlpha = false
+          for (let i = 0; i < value.length; i++) {
+            if (alpha.includes(value.toLowerCase())) {
+              hasAlpha = true
+            }
+          }
+          
+          if(!hasAlpha) {
+            throw new Error('Username must contain a letter')
           }
         }
       }
@@ -46,16 +61,27 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       validate: {
         len: [3, 256],
-        isEmail: true
+        isEmail: true,
+        notEmpty: true
       }
     },
     firstName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        isAlpha: true,
+        notContains: ' '
+      }
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        isAlpha: true,
+        notContains: ' '
+      }
     },
     hashedPassword: {
       type: DataTypes.STRING,

@@ -11,18 +11,32 @@ const router = express.Router();
 const userRouter = express.Router();
 
 // Sign up
-router.post('/signup', validateSignup, async (req, res) => {
+// create validations to throw an error when
+// credentials created is only white space
+router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
-  const user = await User.create({ email, username, hashedPassword, firstName, lastName });
 
-  const safeUser = user.toSafeUser()
+  try {
 
-  await setTokenCookie(res, safeUser);
+    const user = await User.create({ email, username, hashedPassword, firstName, lastName });
+    
+    const safeUser = user.toSafeUser()
+  
+    await setTokenCookie(res, safeUser);
+  
+    return res.json({
+      user: safeUser
+    });
 
-  return res.json({
-    user: safeUser
-  });
+    // Fail-safe in case anything goes wrong
+  } catch (e) {
+    const err = new Error('Account creation failed');
+    err.status = 401;
+    err.title = 'Account creation failed';
+    err.errors = { message: 'Please check all fields match the required parameters.' };
+    return next(err);
+  }
 
 }
 );
@@ -62,7 +76,6 @@ router.post('/login', validateLogin, async (req, res, next) => {
 }
 );
 
-// logs out current session
 
 // Get current user
 router.get('/me', requireAuth, (req, res) => {
@@ -78,6 +91,8 @@ router.get('/me', requireAuth, (req, res) => {
 }
 );
 
+// logs out current session
+// debating to add /me into the route
 router.delete('/', (_req, res) => {
   res.clearCookie('token');
   return res.json({ message: 'success' });
