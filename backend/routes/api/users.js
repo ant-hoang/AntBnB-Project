@@ -99,6 +99,5 @@ router.delete('/', (_req, res) => {
 }
 );
 
-router.get('/me/spots')
 
 module.exports = router, userRouter

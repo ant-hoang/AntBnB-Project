@@ -9,24 +9,21 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING(50)
-      },
-      description: {
-        type: Sequelize.STRING,
+      ownerId: {
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       address: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
       },
       city: {
         type: Sequelize.STRING,
         allowNull: false
       },
       state: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       country: {
         type: Sequelize.STRING,
@@ -38,13 +35,17 @@ module.exports = {
       lng: {
         type: Sequelize.FLOAT
       },
+      name: {
+        type: Sequelize.STRING(50),
+        allowNull: false
+      },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       price: {
         type: Sequelize.INTEGER,
         allowNull: false
-      },
-      owner_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
       },
       createdAt: {
         allowNull: false,
