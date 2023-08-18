@@ -3,7 +3,7 @@
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../validation');
 
-const validateCreateSpot = [
+const validateSpot = [
   check('address')
     .exists({ checkFalsy: true })
     .notEmpty()
@@ -49,4 +49,4 @@ const validateCreateSpot = [
 
 
 
-module.exports = { validateCreateSpot }
+module.exports = { validateSpot }

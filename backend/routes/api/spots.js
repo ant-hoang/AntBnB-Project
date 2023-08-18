@@ -2,21 +2,60 @@
 const express = require('express');
 const { Op } = require('sequelize')
 const bcrypt = require('bcryptjs');
-const { validateCreateSpot } = require('../../utils/validators/spots')
+const { validateSpot } = require('../../utils/validators/spots')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
 
 const router = express.Router();
 
-router.delete('/:spotId', async (req, res) => {
+// Edit a spot
+router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
+  
+  const { spotId } = req.params
+  const { address, city, state, country, lat, lng, name, description, price } = req.body
+  const ownerId = req.user.id
+  
+  try {
+    const editSpot = await Spot.findByPk(+spotId)
+    
+    if(!editSpot.length) {
+      throw new Error('Spot couldn\'t be found')
+
+    } else if (editSpot.ownerId !== ownerId) {
+      throw new Error('Spot couldn\'t be found')
+
+    } else {
+      editSpot.address = address
+      editSpot.city = city
+      editSpot.state = state
+      editSpot.country = country
+      editSpot.lat = lat
+      editSpot.lng = lng
+      editSpot.name = name
+      editSpot.description = description
+      editSpot.price = price
+
+      res.json(editSpot)
+    }
+
+  } catch (e) {
+    const err = new Error('Spot couldn\'t be found')
+    err.status = 404
+    err.title = 'Spot couldn\'t be found';
+    return next(err);
+  }
+})
+
+// Delete a specific spot
+router.delete('/:spotId', requireAuth, async (req, res) => {
   const { spotId } = req.params
   try {
     const deleteSpot = await Spot.findByPk(+spotId)
     if(!deleteSpot.length) throw new Error()
-
+    
     await deleteSpot.destroy()
-  
+    
     res.json({message: "Successfully deleted"})
   } catch (e) {
     const err = new Error('Spot couldn\'t be found')
@@ -72,7 +111,7 @@ router.get('/me', async (req, res) => {
 })
 
 // Create a spot
-router.post('/', requireAuth, validateCreateSpot, async (req, res, next) => {
+router.post('/', requireAuth, validateSpot, async (req, res, next) => {
   const { address, city, state, country, lat, lng, name, description, price } = req.body
   const ownerId = req.user.id
   try {
