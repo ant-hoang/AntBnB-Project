@@ -9,6 +9,17 @@ const { User } = require('../../db/models');
 
 const router = express.Router();
 
+// Get all Spots by the current user
+router.get('/me', async (req, res) => {
+  const currentUserId = req.user.id
+  const currentUserSpots = await Spot.findAll({
+    where: {
+      ownerId: currentUserId
+    }
+  })
+  res.json(currentUserSpots)
+})
+
 // Edit a spot
 router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
   
@@ -18,12 +29,13 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
   
   try {
     const editSpot = await Spot.findByPk(+spotId)
-    
-    if(!editSpot.length) {
-      throw new Error('Spot couldn\'t be found')
 
-    } else if (editSpot.ownerId !== ownerId) {
+    let checkFound = Object.keys(editSpot)
+    if(!checkFound.length) {
       throw new Error('Spot couldn\'t be found')
+      
+    } else if (editSpot.ownerId !== ownerId) {
+      throw new Error('Current user does not own this spot')
 
     } else {
       editSpot.address = address
@@ -39,8 +51,8 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
       res.json(editSpot)
     }
 
-  } catch (e) {
-    const err = new Error('Spot couldn\'t be found')
+  } catch (err) {
+    // const err = new Error('Spot couldn\'t be found')
     err.status = 404
     err.title = 'Spot couldn\'t be found';
     return next(err);
@@ -99,16 +111,6 @@ router.get('/:spotId', async (req, res, next) => {
 })
 
 
-// Get all Spots by the current user
-router.get('/me', async (req, res) => {
-  const currentUserId = req.user.id
-  const currentUserSpots = await Spot.findAll({
-    where: {
-      ownerId: currentUserId
-    }
-  })
-  res.json(currentUserSpots)
-})
 
 // Create a spot
 router.post('/', requireAuth, validateSpot, async (req, res, next) => {
