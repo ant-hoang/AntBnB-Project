@@ -13,6 +13,7 @@ const userRouter = express.Router();
 // Sign up
 // create validations to throw an error when
 // credentials created is only white space
+
 router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);

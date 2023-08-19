@@ -61,8 +61,6 @@ router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) =>
       }
     })
 
-    console.log('getSpotImage:', getSpotImage)
-
     if (!getSpotImage.length) throw new Error('Spot/Image couldn\'t be found')
 
     await getSpotImage[0].destroy()
