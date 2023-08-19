@@ -6,14 +6,29 @@ const bcrypt = require('bcryptjs');
 const { validateSignup, validateLogin } = require('../../utils/validators/users')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
+const { Spot } = require('../../db/models');
+const { Booking } = require('../../db/models');
 
 const router = express.Router();
-const userRouter = express.Router();
+
+// get current user bookings
+router.get('/me/bookings', requireAuth, async (req, res, next) => {
+  const { user } = req
+  const myBookings = await Booking.findAll({
+    where: {
+      userId: user.id
+    },
+    include: {
+      model: Spot,
+      attributes: {
+        exclude: ['createdAt', 'updatedAt']
+      }
+    }
+  })
+  res.json({Bookings: myBookings})
+})
 
 // Sign up
-// create validations to throw an error when
-// credentials created is only white space
-
 router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
@@ -101,4 +116,4 @@ router.delete('/', (_req, res) => {
 );
 
 
-module.exports = router, userRouter
+module.exports = router

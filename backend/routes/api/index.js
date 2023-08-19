@@ -12,7 +12,7 @@ router.use(restoreUser);
 // router.use('/session', sessionRouter);
 router.use('/users', usersRouter);
 router.use('/spots', spotsRouter);
-router.use('/bookings', bookingsRouter);
+// router.use('/bookings', bookingsRouter);
 
 
 // // GET /api/require-auth

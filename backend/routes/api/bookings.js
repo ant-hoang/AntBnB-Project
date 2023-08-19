@@ -10,3 +10,4 @@ const { User } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
 
 const router = express.Router();
+

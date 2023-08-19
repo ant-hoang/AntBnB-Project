@@ -7,6 +7,7 @@ const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
+const { Booking } = require('../../db/models');
 
 const router = express.Router();
 
@@ -21,6 +22,85 @@ router.get('/me', requireAuth, async (req, res) => {
   res.json(currentUserSpots)
 })
 
+// get all bookings for a spot based on spot ID
+router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
+  const { spotId } = req.params
+  const { user } = req
+
+  try {
+    const getSpot = await Spot.findByPk(+spotId)
+    if (!getSpot) throw new Error('Spot couldn\'t be found')
+
+    if (user.id === getSpot.id) {
+      const getBooking = await Booking.findAll({
+        where: {
+          spotId: spotId
+        },
+        include: {
+          model: User,
+          attributes: ['id', 'firstName', 'lastName']
+        }
+      })
+
+      return res.json({ Bookings: getBooking })
+
+    } else {
+      const getBooking = await Booking.findAll({
+        where: {
+          spotId: spotId
+        },
+        attributes: ['spotId', 'startDate', 'endDate']
+      })
+
+      return res.json({ Bookings: getBooking })
+    }
+
+  } catch (err) {
+    err.status = 404;
+    err.title = 'Spot couldn\'t be found';
+    return next(err);
+  }
+})
+
+// create a booking from a spot based on spot Id
+router.post('/:spotId/bookings', requireAuth, async (req, res, next) => {
+  const { spotId } = req.params
+  const userId = req.user.id
+  const { startDate, endDate } = req.body
+
+  try {
+    const findSpot = await Spot.findByPk(+spotId)
+    const findBooking = await Booking.findAll({ where: { spotId: spotId } })
+
+    if (!findSpot) throw new Error('Spot coultn\'t be found')
+
+    for (let i = 0; i < findBooking.length; i++) {
+      let currStartDate = findBooking[i].startDate
+      let currEndDate = findBooking[i].endDate
+
+      if ((startDate > currStartDate && startDate < currEndDate) || (endDate > currStartDate && endDate < currEndDate)) {
+        const err = new Error('Sorry, this spot is already booked for the specified dates')
+        err.title = 'Sorry, this spot is already booked for the specified dates'
+        err.status = 403;
+        err.errors = {
+          startDate: "Start date conflicts with an existing booking",
+          endDate: "End date conflicts with an existing booking"
+        }
+
+        return next(err)
+      }
+    }
+
+    const newBooking = await Booking.create({ spotId, userId, startDate, endDate })
+
+    res.json(newBooking)
+
+  } catch (err) {
+    err.status = 404;
+    err.title = 'Bad request';
+    return next(err);
+  }
+})
 
 // add an image to a spot
 router.post('/:spotId/images', requireAuth, async (req, res, next) => {
@@ -55,8 +135,8 @@ router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) =>
     const getSpotImage = await SpotImage.findAll({
       where: {
         [Op.and]: [
-          {spotId: spotId},
-          {id: imageId}
+          { spotId: spotId },
+          { id: imageId }
         ]
       }
     })
@@ -65,7 +145,7 @@ router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) =>
 
     await getSpotImage[0].destroy()
 
-    res.json({message: "Successfully deleted"})
+    res.json({ message: "Successfully deleted" })
 
   } catch (err) {
     err.status = 404;
@@ -73,7 +153,6 @@ router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) =>
     return next(err);
   }
 })
-
 
 // Edit a spot
 router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
