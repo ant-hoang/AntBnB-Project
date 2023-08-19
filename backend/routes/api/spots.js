@@ -6,6 +6,7 @@ const { validateSpot } = require('../../utils/validators/spots')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
+const { SpotImage } = require('../../db/models');
 
 const router = express.Router();
 
@@ -20,20 +21,76 @@ router.get('/me', async (req, res) => {
   res.json(currentUserSpots)
 })
 
+
+// add an image to a spot
+router.post('/:spotId/images', requireAuth, async (req, res, next) => {
+  const { spotId } = req.params
+  const { url, preview } = req.body
+
+  try {
+    const findSpot = await Spot.findAll({
+      where: {
+        id: spotId
+      }
+    })
+
+    if (!findSpot.length) throw new Error('Spot couldn\'t be found')
+
+    const newSpotImage = await SpotImage.create({ spotId, url, preview })
+
+    res.json(newSpotImage)
+
+  } catch (err) {
+    err.status = 404;
+    err.title = 'Spot couldn\'t be found';
+    return next(err);
+  }
+})
+
+// delete an image from a spot
+router.delete('/:spotId/images/:imageId', async (req, res, next) => {
+  const { spotId, imageId } = req.params
+
+  try {
+    const getSpotImage = await SpotImage.findAll({
+      where: {
+        [Op.and]: [
+          {spotId: spotId},
+          {id: imageId}
+        ]
+      }
+    })
+
+    console.log('getSpotImage:', getSpotImage)
+
+    if (!getSpotImage.length) throw new Error('Spot/Image couldn\'t be found')
+
+    await getSpotImage[0].destroy()
+
+    res.json({message: "Successfully deleted"})
+
+  } catch (err) {
+    err.status = 404;
+    err.title = 'Spot/Image couldn\'t be found';
+    return next(err);
+  }
+})
+
+
 // Edit a spot
 router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
-  
+
   const { spotId } = req.params
   const { address, city, state, country, lat, lng, name, description, price } = req.body
   const ownerId = req.user.id
-  
+
   try {
     const editSpot = await Spot.findByPk(+spotId)
 
     let checkFound = Object.keys(editSpot)
-    if(!checkFound.length) {
+    if (!checkFound.length) {
       throw new Error('Spot couldn\'t be found')
-      
+
     } else if (editSpot.ownerId !== ownerId) {
       throw new Error('Current user does not own this spot')
 
@@ -64,11 +121,11 @@ router.delete('/:spotId', requireAuth, async (req, res) => {
   const { spotId } = req.params
   try {
     const deleteSpot = await Spot.findByPk(+spotId)
-    if(!deleteSpot.length) throw new Error()
-    
+    if (!deleteSpot.length) throw new Error()
+
     await deleteSpot.destroy()
-    
-    res.json({message: "Successfully deleted"})
+
+    res.json({ message: "Successfully deleted" })
   } catch (e) {
     const err = new Error('Spot couldn\'t be found')
     err.status = 404
@@ -85,22 +142,29 @@ router.delete('/:spotId', requireAuth, async (req, res) => {
 router.get('/:spotId', async (req, res, next) => {
   const { spotId } = req.params
 
-  // need to figure out how to exclude username
   try {
     const getDetailedSpot = await Spot.findAll(
       {
         where: {
           id: +spotId
         },
-        include: {
-          model: User,
-        }
+        include: [
+          {
+            model: SpotImage,
+            attributes: ['id', 'url', 'preview']
+          },
+          {
+            model: User,
+            as: 'Owner',
+            attributes: ['id', 'firstName', 'lastName']
+          }
+        ]
       }
     )
-  
-    if(!getDetailedSpot.length) throw new Error()
-  
-    res.json(getDetailedSpot)
+
+    if (!getDetailedSpot.length) throw new Error()
+
+    res.json(getDetailedSpot[0])
 
   } catch (e) {
     const err = new Error('Spot couldn\'t be found');
