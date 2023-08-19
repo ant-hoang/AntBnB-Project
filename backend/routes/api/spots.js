@@ -11,7 +11,7 @@ const { SpotImage } = require('../../db/models');
 const router = express.Router();
 
 // Get all Spots by the current user
-router.get('/me', async (req, res) => {
+router.get('/me', requireAuth, async (req, res) => {
   const currentUserId = req.user.id
   const currentUserSpots = await Spot.findAll({
     where: {
@@ -48,7 +48,7 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
 })
 
 // delete an image from a spot
-router.delete('/:spotId/images/:imageId', async (req, res, next) => {
+router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) => {
   const { spotId, imageId } = req.params
 
   try {
