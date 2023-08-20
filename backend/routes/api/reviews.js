@@ -14,6 +14,32 @@ const { Review } = require('../../db/models');
 const router = express.Router();
 
 // add an image to a review
+// delete an image from a review
+router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) => {
+  const { reviewId, imageId } = req.params
+  const currUserId = req.user.id
+
+  try {
+    const findReviewImage = await ReviewImage.findAll({ where: { id: imageId } })
+    if (!findReviewImage.length) throw new Error('Review image not found')
+    if (findReviewImage[0].userId !== +currUserId) {
+      const err = new Error('Review image does not belong to current user')
+      err.status = 403
+      err.title = 'Cannot delete review image'
+      return next(err)
+    }
+
+    await findReviewImage[0].destroy()
+
+    res.json({message: "Successfully deleted"})
+
+  } catch (err) {
+    err.status = 404
+    err.title = 'Bad Request'
+    return next(err)
+  }
+})
+
 router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
   const { reviewId } = req.params
   const currUserId = req.user.id
@@ -22,7 +48,7 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
   try {
     const findReview = await Review.findByPk(+reviewId)
     if (!findReview) throw new Error('Review couldn\'t be found')
-    if(findReview.userId !== +currUserId) {
+    if (findReview.userId !== +currUserId) {
       const err = new Error('Review does not belong to current user')
       err.status = 403
       err.title = 'Cannot add image to review'
@@ -30,7 +56,7 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
     }
 
     const numReviewImages = await ReviewImage.findAll({ where: { reviewId: reviewId } })
-    if(numReviewImages.length > 10) {
+    if (numReviewImages.length > 10) {
       const err = new Error('Maximum number of images for this resource was reached')
       err.status = 403
       err.title = 'Cannot add image to review'
@@ -50,8 +76,6 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
 
 
 })
-
-// delete an image from a review
 
 
 // edit a review
