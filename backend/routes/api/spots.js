@@ -85,7 +85,7 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
       let currStartDate = findBooking[i].startDate
       let currEndDate = findBooking[i].endDate
 
-      if ((startDate > currStartDate && startDate < currEndDate) || (endDate > currStartDate && endDate < currEndDate) || (startDate < currStartDate && endDate > currEndDate)) {
+      if ((startDate >= currStartDate && startDate <= currEndDate) || (endDate >= currStartDate && endDate <= currEndDate) || (startDate <= currStartDate && endDate >= currEndDate)) {
         const err = new Error('Sorry, this spot is already booked for the specified dates')
         err.title = 'Sorry, this spot is already booked for the specified dates'
         err.status = 403;
@@ -113,15 +113,20 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
 router.post('/:spotId/images', requireAuth, async (req, res, next) => {
   const { spotId } = req.params
   const { url, preview } = req.body
+  const currUserId = req.user.id
 
   try {
-    const findSpot = await Spot.findAll({
-      where: {
-        id: spotId
-      }
-    })
+    const findSpot = await Spot.findByPk(+spotId)
 
-    if (!findSpot.length) throw new Error('Spot couldn\'t be found')
+    if (!findSpot) throw new Error('Spot couldn\'t be found')
+    console.log('ownerId:', findSpot.ownerId)
+    console.log('currUserId:', currUserId)
+    if (findSpot.ownerId !== +currUserId) {
+      const err = new Error('Current user does not own this spot')
+      err.status = 403
+      err.title = 'Cannot add image to spot'
+      return next(err)
+    }
 
     const newSpotImage = await SpotImage.create({ spotId, url, preview })
 
@@ -137,8 +142,18 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
 // delete an image from a spot
 router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) => {
   const { spotId, imageId } = req.params
+  const currUserId = req.user.id
+
 
   try {
+    const findSpot = await Spot.findByPk(+spotId)
+    if (findSpot.ownerId !== +currUserId) {
+      const err = new Error('Current user does not own this spot')
+      err.status = 403
+      err.title = 'Cannot delete image to spot'
+      return next(err)
+    }
+
     const getSpotImage = await SpotImage.findAll({
       where: {
         [Op.and]: [
@@ -166,7 +181,7 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
 
   const { spotId } = req.params
   const { address, city, state, country, lat, lng, name, description, price } = req.body
-  const ownerId = req.user.id
+  const currUserId = req.user.id
 
   try {
     const findSpot = await Spot.findByPk(+spotId)
@@ -175,8 +190,11 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
     if (!checkFound.length) {
       throw new Error('Spot couldn\'t be found')
 
-    } else if (findSpot.ownerId !== ownerId) {
-      throw new Error('Current user does not own this spot')
+    } else if (findSpot.ownerId !== +currUserId) {
+      const err = new Error('Current user does not own this spot')
+      err.status = 403
+      err.title = 'Cannot edit spot'
+      return next(err)
 
     } else {
       const editedSpot = await findSpot.update({
@@ -203,17 +221,24 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
 })
 
 // Delete a specific spot
-router.delete('/:spotId', requireAuth, async (req, res) => {
+router.delete('/:spotId', requireAuth, async (req, res, next) => {
   const { spotId } = req.params
+  const currUserId = req.user.id
+
   try {
     const deleteSpot = await Spot.findByPk(+spotId)
-    if (!deleteSpot.length) throw new Error()
+    if (!deleteSpot) throw new Error('Spot couldn\'t be found')
+    if (deleteSpot.ownerId !== +currUserId) {
+      const err = new Error('Current user does not own this spot')
+      err.status = 403
+      err.title = 'Cannot delete spot'
+      return next(err)
+    }
 
     await deleteSpot.destroy()
 
     res.json({ message: "Successfully deleted" })
-  } catch (e) {
-    const err = new Error('Spot couldn\'t be found')
+  } catch (err) {
     err.status = 404
     err.title = 'Spot couldn\'t be found';
     return next(err);

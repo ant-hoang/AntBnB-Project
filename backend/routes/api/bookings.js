@@ -22,8 +22,9 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
 
     if (!findBooking) throw new Error('Booking coultn\'t be found')
 
-    if (findBooking.userId !== currUserId) {
+    if (findBooking.userId !== +currUserId) {
       const err = new Error('Cannot edit a booking the user does not own')
+      err.status = 403
       err.title = 'Cannot edit a booking the user does not own'
       return next(err)
     }
@@ -46,7 +47,7 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
     let currentDate = new Date()
     let editedCurrentDate = currentDate.toISOString().slice(0, 10)
 
-    if (endDate > editedCurrentDate) {
+    if (editedCurrentDate > currEndDate) {
       const err = new Error('Past bookings can\'t be modified')
       err.title = 'Past bookings can\'t be modified'
       err.status = 400;
@@ -75,7 +76,13 @@ router.delete('/:bookingId', requireAuth, async (req, res, next) => {
   try {
     const findBooking = await Booking.findByPk(+bookingId)
     if (!findBooking) throw new Error('Booking couldn\'t be found')
-    if (findBooking.userId !== currUserId) throw new Error('Booking does not belong to current user')
+    if (findBooking.userId !== +currUserId) {
+      const err = new Error('Current user does not own this booking')
+      err.title = 'Cannot delete booking'
+      err.status = 403;
+
+      return next(err)
+    }
 
     let currentDate = new Date()
     let editedCurrentDate = currentDate.toISOString().slice(0, 10)

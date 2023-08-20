@@ -56,23 +56,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     price: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        underZero(value) {
+          if(value < 0) throw new Error('Not a valid price')
+        }
+      }
     }
   }, {
     sequelize,
     modelName: 'Spot',
-    // scopes: {
-    //   noUsername: function (spotId) {
-    //     return {
-    //       where: {
-    //         spotId
-    //       },
-    //       include: {
-    //         model: User
-    //       }
-    //     }
-    //   }
-    // }
   });
   return Spot;
 };
