@@ -8,10 +8,53 @@ const { Booking } = require('../../db/models');
 const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
+const { ReviewImage } = require('../../db/models');
 const { Review } = require('../../db/models');
 
 const router = express.Router();
 
+// add an image to a review
+router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
+  const { reviewId } = req.params
+  const currUserId = req.user.id
+  const { url } = req.body
+
+  try {
+    const findReview = await Review.findByPk(+reviewId)
+    if (!findReview) throw new Error('Review couldn\'t be found')
+    if(findReview.userId !== +currUserId) {
+      const err = new Error('Review does not belong to current user')
+      err.status = 403
+      err.title = 'Cannot add image to review'
+      return next(err)
+    }
+
+    const numReviewImages = await ReviewImage.findAll({ where: { reviewId: reviewId } })
+    if(numReviewImages.length > 10) {
+      const err = new Error('Maximum number of images for this resource was reached')
+      err.status = 403
+      err.title = 'Cannot add image to review'
+      return next(err)
+    }
+
+    const createReviewImage = await ReviewImage.create({ reviewId, url })
+
+    res.json(createReviewImage)
+
+  } catch (err) {
+    err.status = 404
+    err.title = 'Bad request'
+    return next(err)
+  }
+
+
+
+})
+
+// delete an image from a review
+
+
+// edit a review
 router.put('/:reviewId', requireAuth, validateReview, async (req, res, next) => {
   const { reviewId } = req.params
   const { review, stars } = req.body
@@ -41,6 +84,7 @@ router.put('/:reviewId', requireAuth, validateReview, async (req, res, next) => 
 
 })
 
+// delete a review
 router.delete('/:reviewId', requireAuth, async (req, res, next) => {
   const { reviewId } = req.params
   const currUserId = req.user.id
@@ -48,7 +92,7 @@ router.delete('/:reviewId', requireAuth, async (req, res, next) => {
   try {
     const findReview = await Review.findByPk(+reviewId)
     if (!findReview) throw new Error('Review couldn\'t be found')
-    if(findReview.userId !== +currUserId) {
+    if (findReview.userId !== +currUserId) {
       const err = new Error('Review does not belong to current user')
       err.status = 403
       err.title = 'Cannot delete review'
@@ -56,7 +100,7 @@ router.delete('/:reviewId', requireAuth, async (req, res, next) => {
     }
 
     await findReview.destroy()
-    res.json({message: "Successfully deleted"})
+    res.json({ message: "Successfully deleted" })
 
   } catch (err) {
     err.status = 404
