@@ -3,6 +3,7 @@ const express = require('express');
 const { Op } = require('sequelize')
 const bcrypt = require('bcryptjs');
 const { validateSpot } = require('../../utils/validators/spots')
+const { validateBooking } = require('../../utils/validators/bookings')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
@@ -63,7 +64,7 @@ router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
 })
 
 // create a booking from a spot based on spot Id
-router.post('/:spotId/bookings', requireAuth, async (req, res, next) => {
+router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, next) => {
   const { spotId } = req.params
   const userId = req.user.id
   const { startDate, endDate } = req.body
@@ -73,12 +74,18 @@ router.post('/:spotId/bookings', requireAuth, async (req, res, next) => {
     const findBooking = await Booking.findAll({ where: { spotId: spotId } })
 
     if (!findSpot) throw new Error('Spot coultn\'t be found')
+    if (findSpot.ownerId === +userId) {
+      const err = new Error('Cannot book a spot current user owns')
+      err.title = 'Cannot book a spot current user owns'
+      err.status = 403
+      return next(err)
+    }
 
     for (let i = 0; i < findBooking.length; i++) {
       let currStartDate = findBooking[i].startDate
       let currEndDate = findBooking[i].endDate
 
-      if ((startDate > currStartDate && startDate < currEndDate) || (endDate > currStartDate && endDate < currEndDate)) {
+      if ((startDate > currStartDate && startDate < currEndDate) || (endDate > currStartDate && endDate < currEndDate) || (startDate < currStartDate && endDate > currEndDate)) {
         const err = new Error('Sorry, this spot is already booked for the specified dates')
         err.title = 'Sorry, this spot is already booked for the specified dates'
         err.status = 403;
@@ -162,33 +169,35 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
   const ownerId = req.user.id
 
   try {
-    const editSpot = await Spot.findByPk(+spotId)
+    const findSpot = await Spot.findByPk(+spotId)
 
-    let checkFound = Object.keys(editSpot)
+    let checkFound = Object.keys(findSpot)
     if (!checkFound.length) {
       throw new Error('Spot couldn\'t be found')
 
-    } else if (editSpot.ownerId !== ownerId) {
+    } else if (findSpot.ownerId !== ownerId) {
       throw new Error('Current user does not own this spot')
 
     } else {
-      editSpot.address = address
-      editSpot.city = city
-      editSpot.state = state
-      editSpot.country = country
-      editSpot.lat = lat
-      editSpot.lng = lng
-      editSpot.name = name
-      editSpot.description = description
-      editSpot.price = price
+      const editedSpot = await findSpot.update({
+        address: address,
+        city: city,
+        state: state,
+        country: country,
+        lat: lat,
+        lng: lng,
+        name: name,
+        description: description,
+        price: price
+      })
 
-      res.json(editSpot)
+      res.json(editedSpot)
     }
 
   } catch (err) {
     // const err = new Error('Spot couldn\'t be found')
     err.status = 404
-    err.title = 'Spot couldn\'t be found';
+    err.title = 'Spot couldn\'t be edited';
     return next(err);
   }
 })
@@ -212,10 +221,10 @@ router.delete('/:spotId', requireAuth, async (req, res) => {
 })
 
 
+
+
 // Need to add average rating and preview image
 // Average Rating pulled from reviews table and create an average aggregate query
-
-
 router.get('/:spotId', async (req, res, next) => {
   const { spotId } = req.params
 

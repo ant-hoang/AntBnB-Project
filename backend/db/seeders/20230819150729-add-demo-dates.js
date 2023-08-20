@@ -17,29 +17,29 @@ module.exports = {
     await Booking.bulkCreate([
       {
         spotId: 1,
-        userId: 1,
-        startDate: '2023-08-20',
-        endDate: '2023-08-25'
+        userId: 2,
+        startDate: '2023-07-20',
+        endDate: '2023-07-25'
       },
       {
         spotId: 2,
-        userId: 2,
+        userId: 1,
         startDate: '2023-10-01',
         endDate: '2023-10-10'
       },
       {
         spotId: 3,
-        userId: 3,
+        userId: 1,
         startDate: '2023-09-20',
         endDate: '2023-09-25'
       },
       {
-        spotId: 2,
+        spotId: 3,
         userId: 2,
         startDate: '2023-11-01',
         endDate: '2023-11-10'
       },
-    ], { validate: true })
+    ])
   },
 
   async down(queryInterface, Sequelize) {

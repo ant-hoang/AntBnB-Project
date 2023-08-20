@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATEONLY,
       allowNull: false,
       validate: {
+        isDate: true,
         beforeEndDate(value) {
           if (value > this.endDate) throw new Error('cannot book a start before the end')
         },
@@ -42,8 +43,11 @@ module.exports = (sequelize, DataTypes) => {
     endDate: {
       type: DataTypes.DATEONLY,
       allowNull: false,
-      afterStartDate(value) {
-        if (value < this.startDate) throw new Error('cannot end date before the start')
+      validate: {
+        isDate: true,
+        afterStartDate(value) {
+          if (value < this.startDate) throw new Error('cannot end date before the start')
+        }
       }
     }
   }, {
