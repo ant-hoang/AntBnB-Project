@@ -6,11 +6,11 @@ const { validateSpot } = require('../../utils/validators/spots')
 const { validateBooking } = require('../../utils/validators/bookings')
 const { validateReview } = require('../../utils/validators/reviews')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
+const { Spot } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
-const { Booking } = require('../../db/models');
 const { Review } = require('../../db/models');
+const { Booking } = require('../../db/models');
 
 const router = express.Router();
 
@@ -68,7 +68,7 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res, ne
     })
     if (checkIfReview.length) {
       const err = new Error('User already has a review for this spot')
-      err.status = 500
+      err.status = 403
       err.title = "Review could not be added"
       return next(err)
     }
