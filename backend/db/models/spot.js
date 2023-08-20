@@ -1,6 +1,6 @@
 'use strict';
 const { Model, Validator } = require('sequelize');
-const { User } = require('../models')
+// const { User } = require('../models')
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
     /**
@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Spot.belongsTo(models.User, { foreignKey: 'ownerId', as: 'Owner' })
       Spot.hasMany(models.SpotImage, { foreignKey: 'spotId'})
+      Spot.hasMany(models.Booking, {foreignKey: 'spotId'})
     }
   }
   Spot.init({
@@ -55,23 +56,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     price: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        underZero(value) {
+          if(value < 0) throw new Error('Not a valid price')
+        }
+      }
     }
   }, {
     sequelize,
     modelName: 'Spot',
-    // scopes: {
-    //   noUsername: function (spotId) {
-    //     return {
-    //       where: {
-    //         spotId
-    //       },
-    //       include: {
-    //         model: User
-    //       }
-    //     }
-    //   }
-    // }
   });
   return Spot;
 };
