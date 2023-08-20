@@ -4,12 +4,13 @@ const { Op } = require('sequelize')
 const bcrypt = require('bcryptjs');
 const { validateSpot } = require('../../utils/validators/spots')
 const { validateBooking } = require('../../utils/validators/bookings')
+const { validateReview } = require('../../utils/validators/reviews')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
 const { Booking } = require('../../db/models');
-const { sequelize } = require('sequelize')
+const { Review } = require('../../db/models');
 
 const router = express.Router();
 
@@ -24,16 +25,78 @@ router.get('/me', requireAuth, async (req, res) => {
   res.json(currentUserSpots)
 })
 
+// get all reviews from a specific spot
+// need to include ReviewImage Model
+router.get('/:spotId/reviews', requireAuth, async (req, res, next) => {
+  const { spotId } = req.params
+
+  try {
+    const findReviews = await Review.findAll({
+      where: {
+        spotId: spotId
+      },
+      include: {
+        model: User,
+        attributes: ['id', 'firstName', 'lastName']
+      }
+    })
+
+    if(!findReviews.length) throw new Error('Cannot get reviews')
+
+    res.json({Reviews: findReviews})
+
+  } catch (err) {
+    err.status = 404;
+    err.title = 'Spot couldn\'t be found';
+    return next(err);
+  }
+})
+
+// create a review for a specific spot
+router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res, next) => {
+  const { spotId } = req.params
+  const { review, stars } = req.body
+  const userId = req.user.id
+
+  try {
+    // check if the user already created a review for this spot
+    const checkIfReview = await Review.findAll({
+      where: {
+        spotId: spotId,
+        userId: userId
+      }
+    })
+    if (checkIfReview.length) {
+      const err = new Error('User already has a review for this spot')
+      err.status = 500
+      err.title = "Review could not be added"
+      return next(err)
+    }
+
+    // check if the spot exists
+    const findSpot = await Spot.findByPk(+spotId)
+    if (!findSpot) throw new Error('Spot couldn\'t be found')
+
+    const newReview = await Review.create({ userId, spotId, review, stars })
+    res.json(newReview)
+  } catch (err) {
+    err.status = 404;
+    err.title = 'Bad request';
+    return next(err);
+  }
+})
+
 // get all bookings for a spot based on spot ID
+// need to include ReviewImage model
 router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
   const { spotId } = req.params
-  const { user } = req
+  const currUserId = req.user.id
 
   try {
     const getSpot = await Spot.findByPk(+spotId)
     if (!getSpot) throw new Error('Spot couldn\'t be found')
 
-    if (user.id === getSpot.id) {
+    if (currUserId === getSpot.id) {
       const getBooking = await Booking.findAll({
         where: {
           spotId: spotId
@@ -323,6 +386,7 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
 })
 
 // Get all Spots
+// Code has previewImage added
 router.get('/', async (req, res) => {
   const allSpots = await Spot.findAll()
   let spots = []
