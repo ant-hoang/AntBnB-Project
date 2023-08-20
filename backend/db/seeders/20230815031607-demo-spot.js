@@ -52,7 +52,7 @@ module.exports = {
        price: 999
      },
      {
-       ownerId: 4,
+       ownerId: 2,
        address: "123 Disney Lane",
        city: "San Francisco",
        state: "California",

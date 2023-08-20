@@ -9,6 +9,7 @@ const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
 const { Booking } = require('../../db/models');
+const { sequelize } = require('sequelize')
 
 const router = express.Router();
 
@@ -323,7 +324,21 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
 
 // Get all Spots
 router.get('/', async (req, res) => {
-  const spots = await Spot.findAll()
+  const allSpots = await Spot.findAll()
+  let spots = []
+
+  for (let i = 0; i < allSpots.length; i++) {
+    let spot = allSpots[i].toJSON()
+    let spotImage = await SpotImage.findOne({where: {
+      spotId: allSpots[i].id,
+      preview: true
+    }})
+    if(spotImage) {
+      spot.previewImage = spotImage.url
+      spots.push(spot)
+    }
+  }
+ 
 
   res.json({ "Spots": spots })
 })

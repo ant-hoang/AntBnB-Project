@@ -8,11 +8,37 @@ const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
 const { Spot } = require('../../db/models');
 const { Booking } = require('../../db/models');
+const { Review } = require('../../db/models');
 
 const router = express.Router();
 
+// get current user reviews
+// need to add review Images
+router.get('/me/reviews', requireAuth, async (req, res, _next) => {
+  const { user } = req
+  const myReviews = await Review.findAll({
+    where: {
+      userId: user.id
+    },
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'firstName', 'lastName']
+      },
+      {
+       model: Spot,
+       attributes: {
+        exclude: ['createdAt', 'updatedAt']
+       } 
+      }
+    ]
+  })
+
+  res.json({ Reviews: myReviews })
+})
+
 // get current user bookings
-router.get('/me/bookings', requireAuth, async (req, res, next) => {
+router.get('/me/bookings', requireAuth, async (req, res, _next) => {
   const { user } = req
   const myBookings = await Booking.findAll({
     where: {
@@ -25,7 +51,7 @@ router.get('/me/bookings', requireAuth, async (req, res, next) => {
       }
     }
   })
-  res.json({Bookings: myBookings})
+  res.json({ Bookings: myBookings })
 })
 
 // Sign up
@@ -36,11 +62,11 @@ router.post('/signup', validateSignup, async (req, res, next) => {
   try {
 
     const user = await User.create({ email, username, hashedPassword, firstName, lastName });
-    
+
     const safeUser = user.toSafeUser()
-  
+
     await setTokenCookie(res, safeUser);
-  
+
     return res.json({
       user: safeUser
     });
@@ -92,7 +118,6 @@ router.post('/login', validateLogin, async (req, res, next) => {
 }
 );
 
-
 // Get current user
 router.get('/me', requireAuth, (req, res) => {
   const { user } = req;
@@ -108,8 +133,7 @@ router.get('/me', requireAuth, (req, res) => {
 );
 
 // logs out current session
-// debating to add /me into the route
-router.delete('/', (_req, res) => {
+router.delete('/me', (_req, res) => {
   res.clearCookie('token');
   return res.json({ message: 'success' });
 }
