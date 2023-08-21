@@ -8,6 +8,7 @@ const { User } = require('../../db/models');
 const { Spot } = require('../../db/models');
 const { Booking } = require('../../db/models');
 const { Review } = require('../../db/models');
+const { ReviewImage } = require('../../db/models');
 
 const router = express.Router();
 
@@ -29,6 +30,10 @@ router.get('/me/reviews', requireAuth, async (req, res, _next) => {
        attributes: {
         exclude: ['createdAt', 'updatedAt']
        } 
+      },
+      {
+        model: ReviewImage,
+        attributes: ['id', 'url']
       }
     ]
   })

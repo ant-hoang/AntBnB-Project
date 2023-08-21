@@ -11,6 +11,7 @@ const { Spot } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
 const { Review } = require('../../db/models');
 const { Booking } = require('../../db/models');
+const { sequelize } = require('../../db/models')
 
 const router = express.Router();
 
@@ -41,9 +42,9 @@ router.get('/:spotId/reviews', requireAuth, async (req, res, next) => {
       }
     })
 
-    if(!findReviews.length) throw new Error('Cannot get reviews')
+    if (!findReviews.length) throw new Error('Cannot get reviews')
 
-    res.json({Reviews: findReviews})
+    res.json({ Reviews: findReviews })
 
   } catch (err) {
     err.status = 404;
@@ -389,20 +390,25 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
 // Code has previewImage added
 router.get('/', async (req, res) => {
   const allSpots = await Spot.findAll()
+  const getReview = await allSpots[0].getReviews()
   let spots = []
 
   for (let i = 0; i < allSpots.length; i++) {
     let spot = allSpots[i].toJSON()
-    let spotImage = await SpotImage.findOne({where: {
-      spotId: allSpots[i].id,
-      preview: true
-    }})
-    if(spotImage) {
+    let spotImage = await SpotImage.findOne(
+      {
+        where: {
+          spotId: allSpots[i].id,
+          preview: true
+        },
+        i
+      })
+    if (spotImage) {
       spot.previewImage = spotImage.url
       spots.push(spot)
     }
   }
- 
+
 
   res.json({ "Spots": spots })
 })

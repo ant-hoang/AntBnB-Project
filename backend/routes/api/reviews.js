@@ -13,12 +13,11 @@ const { Review } = require('../../db/models');
 
 const router = express.Router();
 
-// add an image to a review
 // delete an image from a review
 router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) => {
   const { reviewId, imageId } = req.params
   const currUserId = req.user.id
-
+  
   try {
     const findReviewImage = await ReviewImage.findAll({ where: { id: imageId } })
     if (!findReviewImage.length) throw new Error('Review image not found')
@@ -28,11 +27,11 @@ router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) 
       err.title = 'Cannot delete review image'
       return next(err)
     }
-
+    
     await findReviewImage[0].destroy()
-
+    
     res.json({message: "Successfully deleted"})
-
+    
   } catch (err) {
     err.status = 404
     err.title = 'Bad Request'
@@ -40,6 +39,7 @@ router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) 
   }
 })
 
+// add an image to a review
 router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
   const { reviewId } = req.params
   const currUserId = req.user.id
