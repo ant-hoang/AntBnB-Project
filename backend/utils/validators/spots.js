@@ -3,6 +3,42 @@
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../validation');
 
+const validateQuery = [
+  check('page')
+    .optional()
+    .isFloat({ gt: 0 })
+    .withMessage("Page must be greater than or equal to 1"),
+  check('size')
+    .optional()
+    .isFloat({ gt: 0 })
+    .withMessage("Size must be greater than or equal to 1"),
+  check('maxLat')
+    .optional()
+    .isDecimal()
+    .withMessage("Maximum latitude is invalid"),
+  check('minLat')
+    .optional()
+    .isDecimal()
+    .withMessage("Minimum latitude is invalid"),
+  check('minLng')
+    .optional()
+    .isDecimal()
+    .withMessage("Minimum longitude is invalid"),
+  check('maxLng')
+    .optional()
+    .isDecimal()
+    .withMessage("Maximum longitude is invalid"),
+  check('minPrice')
+    .optional()
+    .isFloat({ gt: 0 })
+    .withMessage("Minimum price must be greater than or equal to 0"),
+  check('maxPrice')
+    .optional()
+    .isFloat({ gt: 0 })
+    .withMessage("Maximum price must be greater than or equal to 0"),
+  handleValidationErrors
+]
+
 const validateSpot = [
   check('address')
     .exists({ checkFalsy: true })
@@ -32,7 +68,7 @@ const validateSpot = [
     .exists({ checkFalsy: true })
     .notEmpty()
     .withMessage('name is required')
-    .isLength({max: 50})
+    .isLength({ max: 50 })
     .withMessage('Name must be less than 50 characters.'),
   check('description')
     .exists({ checkFalsy: true })
@@ -49,4 +85,4 @@ const validateSpot = [
 
 
 
-module.exports = { validateSpot }
+module.exports = { validateQuery, validateSpot }
