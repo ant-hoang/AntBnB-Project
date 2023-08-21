@@ -65,7 +65,7 @@ router.get('/?', validateQuery, async (req, res, next) => {
   }
 
 
-  res.json({ "Spots": spots })
+  res.json({ Spots: spots })
 })
 
 // Get all Spots by the current user
@@ -76,7 +76,7 @@ router.get('/me', requireAuth, async (req, res) => {
       ownerId: currentUserId
     }
   })
-  res.json(currentUserSpots)
+  res.json({Spots: currentUserSpots})
 })
 
 // get all reviews from a specific spot
