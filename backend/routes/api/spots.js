@@ -2,7 +2,7 @@
 const express = require('express');
 const { Op } = require('sequelize')
 const bcrypt = require('bcryptjs');
-const { validateSpot } = require('../../utils/validators/spots')
+const { validateQuery, validateSpot } = require('../../utils/validators/spots')
 const { validateBooking } = require('../../utils/validators/bookings')
 const { validateReview } = require('../../utils/validators/reviews')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
@@ -14,6 +14,58 @@ const { Booking } = require('../../db/models');
 const { sequelize } = require('../../db/models')
 
 const router = express.Router();
+
+// Get all Spots with query parameters
+router.get('/?', validateQuery, async (req, res, next) => {
+  let { page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = req.query
+
+  // pagination
+  const pagination = {}
+  if (!page) page = 1
+  if (!size) size = 20
+
+  page = parseInt(page)
+  size = parseInt(size)
+
+  if (page >= 1 && size >= 1) {
+    pagination.limit = size
+    pagination.offset = size * (page - 1)
+  }
+
+  // search parameters
+  const where = {}
+  
+  if(minLat) where.lat = {[Op.gt]: minLat}
+  if(maxLat) where.lat = {[Op.lt]: maxLat}
+  if(minLng) where.lng = {[Op.gt]: minLng}
+  if(maxLng) where.lng = {[Op.lt]: maxLng}
+  if(minPrice) where.price = {[Op.gt]: minPrice}
+  if(maxPrice) where.price = {[Op.lt]: maxPrice}
+
+  const allSpots = await Spot.findAll({
+    where,
+    ...pagination
+  })
+  let spots = []
+
+  for (let i = 0; i < allSpots.length; i++) {
+    let spot = allSpots[i].toJSON()
+    let spotImage = await SpotImage.findOne(
+      {
+        where: {
+          spotId: spot.id,
+          preview: true
+        },
+      })
+    if (spotImage) {
+      spot.previewImage = spotImage.url
+      spots.push(spot)
+    }
+  }
+
+
+  res.json({ "Spots": spots })
+})
 
 // Get all Spots by the current user
 router.get('/me', requireAuth, async (req, res) => {
@@ -390,7 +442,6 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
 // Code has previewImage added
 router.get('/', async (req, res) => {
   const allSpots = await Spot.findAll()
-  // const getReview = await allSpots[0].getReviews()
   let spots = []
 
   for (let i = 0; i < allSpots.length; i++) {
