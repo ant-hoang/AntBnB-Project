@@ -42,7 +42,6 @@ router.get('/?', validateQuery, async (req, res, next) => {
   if(minPrice) where.price = {[Op.gt]: minPrice}
   if(maxPrice) where.price = {[Op.lt]: maxPrice}
 
-
   const allSpots = await Spot.findAll({
     where,
     ...pagination
