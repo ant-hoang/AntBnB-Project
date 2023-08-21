@@ -398,7 +398,7 @@ router.get('/', async (req, res) => {
     let spotImage = await SpotImage.findOne(
       {
         where: {
-          spotId: allSpots[i].id,
+          spotId: spot.id,
           preview: true
         },
         i
