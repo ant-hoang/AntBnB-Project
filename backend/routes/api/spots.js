@@ -401,7 +401,6 @@ router.get('/', async (req, res) => {
           spotId: spot.id,
           preview: true
         },
-        i
       })
     if (spotImage) {
       spot.previewImage = spotImage.url
@@ -412,9 +411,5 @@ router.get('/', async (req, res) => {
 
   res.json({ "Spots": spots })
 })
-
-// /reviews/spots/:spotId
-router.get('/:spotId/reviews')
-
 
 module.exports = router
