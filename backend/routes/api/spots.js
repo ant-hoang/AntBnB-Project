@@ -64,7 +64,7 @@ router.get('/?', validateQuery, async (req, res, next) => {
   }
 
 
-  res.json({ Spots: spots })
+  res.json({ Spots: spots, page, size })
 })
 
 // Get all Spots by the current user
