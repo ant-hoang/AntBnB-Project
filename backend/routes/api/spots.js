@@ -390,7 +390,7 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
 // Code has previewImage added
 router.get('/', async (req, res) => {
   const allSpots = await Spot.findAll()
-  const getReview = await allSpots[0].getReviews()
+  // const getReview = await allSpots[0].getReviews()
   let spots = []
 
   for (let i = 0; i < allSpots.length; i++) {
