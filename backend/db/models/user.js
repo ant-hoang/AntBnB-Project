@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
           const alpha = 'abcdefghijklmnopqrstuvwxyz'
           let hasAlpha = false
           for (let i = 0; i < value.length; i++) {
-            if (alpha.includes(value.toLowerCase())) {
+            if (alpha.includes(value[i].toLowerCase())) {
               hasAlpha = true
             }
           }
