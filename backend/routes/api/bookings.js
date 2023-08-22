@@ -11,6 +11,22 @@ const { SpotImage } = require('../../db/models');
 
 const router = express.Router();
 
+router.get('/me', requireAuth, async (req, res, _next) => {
+  const { user } = req
+  const myBookings = await Booking.findAll({
+    where: {
+      userId: user.id
+    },
+    include: {
+      model: Spot,
+      attributes: {
+        exclude: ['createdAt', 'updatedAt']
+      }
+    }
+  })
+  res.json({ Bookings: myBookings })
+})
+
 // edit a booking
 router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) => {
   const { bookingId } = req.params

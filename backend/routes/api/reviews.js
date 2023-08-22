@@ -13,6 +13,33 @@ const { Review } = require('../../db/models');
 
 const router = express.Router();
 
+router.get('/me', requireAuth, async (req, res, _next) => {
+  const { user } = req
+  const myReviews = await Review.findAll({
+    where: {
+      userId: user.id
+    },
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'firstName', 'lastName']
+      },
+      {
+        model: Spot,
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        }
+      },
+      {
+        model: ReviewImage,
+        attributes: ['id', 'url']
+      }
+    ]
+  })
+
+  res.json({ Reviews: myReviews })
+})
+
 // delete an image from a review
 router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) => {
   const { reviewId, imageId } = req.params
@@ -88,7 +115,7 @@ router.put('/:reviewId', requireAuth, validateReview, async (req, res, next) => 
     })
 
     if (!findReview.length) throw new Error("Review couldn\'t be found")
-    
+
 
 
     const editedReview = await findReview[0].update({

@@ -12,51 +12,6 @@ const { ReviewImage } = require('../../db/models');
 
 const router = express.Router();
 
-// get current user reviews
-// need to add review Images
-router.get('/me/reviews', requireAuth, async (req, res, _next) => {
-  const { user } = req
-  const myReviews = await Review.findAll({
-    where: {
-      userId: user.id
-    },
-    include: [
-      {
-        model: User,
-        attributes: ['id', 'firstName', 'lastName']
-      },
-      {
-        model: Spot,
-        attributes: {
-          exclude: ['createdAt', 'updatedAt']
-        }
-      },
-      {
-        model: ReviewImage,
-        attributes: ['id', 'url']
-      }
-    ]
-  })
-
-  res.json({ Reviews: myReviews })
-})
-
-// get current user bookings
-router.get('/me/bookings', requireAuth, async (req, res, _next) => {
-  const { user } = req
-  const myBookings = await Booking.findAll({
-    where: {
-      userId: user.id
-    },
-    include: {
-      model: Spot,
-      attributes: {
-        exclude: ['createdAt', 'updatedAt']
-      }
-    }
-  })
-  res.json({ Bookings: myBookings })
-})
 
 // Sign up
 router.post('/signup', validateSignup, async (req, res, next) => {
