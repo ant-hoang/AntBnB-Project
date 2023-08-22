@@ -100,7 +100,6 @@ router.get('/:spotId/reviews', requireAuth, async (req, res, next) => {
 
   } catch (err) {
     err.status = 404;
-    err.title = 'Spot couldn\'t be found';
     return next(err);
   }
 })
@@ -122,7 +121,6 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res, ne
     if (checkIfReview.length) {
       const err = new Error('User already has a review for this spot')
       err.status = 403
-      err.title = "Review could not be added"
       return next(err)
     }
 
@@ -134,7 +132,6 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res, ne
     res.json(newReview)
   } catch (err) {
     err.status = 404;
-    err.title = 'Bad request';
     return next(err);
   }
 })
@@ -175,7 +172,6 @@ router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
 
   } catch (err) {
     err.status = 404;
-    err.title = 'Spot couldn\'t be found';
     return next(err);
   }
 })
@@ -193,7 +189,6 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
     if (!findSpot) throw new Error('Spot coultn\'t be found')
     if (findSpot.ownerId === +userId) {
       const err = new Error('Cannot book a spot current user owns')
-      err.title = 'Cannot book a spot current user owns'
       err.status = 403
       return next(err)
     }
@@ -204,7 +199,6 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
 
       if ((startDate >= currStartDate && startDate <= currEndDate) || (endDate >= currStartDate && endDate <= currEndDate) || (startDate <= currStartDate && endDate >= currEndDate)) {
         const err = new Error('Sorry, this spot is already booked for the specified dates')
-        err.title = 'Sorry, this spot is already booked for the specified dates'
         err.status = 403;
         err.errors = {
           startDate: "Start date conflicts with an existing booking",
@@ -221,7 +215,6 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
 
   } catch (err) {
     err.status = 404;
-    err.title = 'Bad request';
     return next(err);
   }
 })
@@ -241,7 +234,6 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
     if (findSpot.ownerId !== +currUserId) {
       const err = new Error('Current user does not own this spot')
       err.status = 403
-      err.title = 'Cannot add image to spot'
       return next(err)
     }
 
@@ -251,7 +243,6 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
 
   } catch (err) {
     err.status = 404;
-    err.title = 'Spot couldn\'t be found';
     return next(err);
   }
 })
@@ -267,7 +258,6 @@ router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) =>
     if (findSpot.ownerId !== +currUserId) {
       const err = new Error('Current user does not own this spot')
       err.status = 403
-      err.title = 'Cannot delete image to spot'
       return next(err)
     }
 
@@ -288,7 +278,6 @@ router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) =>
 
   } catch (err) {
     err.status = 404;
-    err.title = 'Spot/Image couldn\'t be found';
     return next(err);
   }
 })
@@ -310,7 +299,6 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
     } else if (findSpot.ownerId !== +currUserId) {
       const err = new Error('Current user does not own this spot')
       err.status = 403
-      err.title = 'Cannot edit spot'
       return next(err)
 
     } else {
@@ -332,7 +320,6 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
   } catch (err) {
     // const err = new Error('Spot couldn\'t be found')
     err.status = 404
-    err.title = 'Spot couldn\'t be edited';
     return next(err);
   }
 })
@@ -348,7 +335,6 @@ router.delete('/:spotId', requireAuth, async (req, res, next) => {
     if (deleteSpot.ownerId !== +currUserId) {
       const err = new Error('Current user does not own this spot')
       err.status = 403
-      err.title = 'Cannot delete spot'
       return next(err)
     }
 
@@ -357,7 +343,6 @@ router.delete('/:spotId', requireAuth, async (req, res, next) => {
     res.json({ message: "Successfully deleted" })
   } catch (err) {
     err.status = 404
-    err.title = 'Spot couldn\'t be found';
     return next(err);
   }
 })
@@ -394,11 +379,10 @@ router.get('/:spotId', async (req, res, next) => {
 
     res.json(getDetailedSpot[0])
 
-  } catch (e) {
-    const err = new Error('Spot couldn\'t be found');
+  } catch (err) {
+    err.message = 'Spot couldn\'t be found'
     err.status = 404;
-    err.title = 'Spot couldn\'t be found';
-    return next(err);
+    return next(err)
   }
 })
 
@@ -420,7 +404,6 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
     if (currentSpots.length) {
       const err = new Error('Bad request')
       err.status = 400;
-      err.title = 'Bad request';
       err.errors = { message: 'Spot address has already been created.' };
       return next(err);
     }
@@ -432,7 +415,6 @@ router.post('/', requireAuth, validateSpot, async (req, res, next) => {
   } catch (e) {
     const err = new Error('Spot creation failed');
     err.status = 400;
-    err.title = 'Spot creation failed';
     err.errors = { message: 'Please check all fields match the required parameters.' };
     return next(err);
   }

@@ -24,7 +24,6 @@ router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) 
     if (findReviewImage[0].userId !== +currUserId) {
       const err = new Error('Review image does not belong to current user')
       err.status = 403
-      err.title = 'Cannot delete review image'
       return next(err)
     }
     
@@ -34,7 +33,6 @@ router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) 
     
   } catch (err) {
     err.status = 404
-    err.title = 'Bad Request'
     return next(err)
   }
 })
@@ -51,7 +49,6 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
     if (findReview.userId !== +currUserId) {
       const err = new Error('Review does not belong to current user')
       err.status = 403
-      err.title = 'Cannot add image to review'
       return next(err)
     }
 
@@ -59,7 +56,6 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
     if (numReviewImages.length > 10) {
       const err = new Error('Maximum number of images for this resource was reached')
       err.status = 403
-      err.title = 'Cannot add image to review'
       return next(err)
     }
 
@@ -69,7 +65,6 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
 
   } catch (err) {
     err.status = 404
-    err.title = 'Bad request'
     return next(err)
   }
 
@@ -93,6 +88,8 @@ router.put('/:reviewId', requireAuth, validateReview, async (req, res, next) => 
     })
 
     if (!findReview.length) throw new Error("Review couldn\'t be found")
+    
+
 
     const editedReview = await findReview[0].update({
       review: review,
@@ -119,7 +116,6 @@ router.delete('/:reviewId', requireAuth, async (req, res, next) => {
     if (findReview.userId !== +currUserId) {
       const err = new Error('Review does not belong to current user')
       err.status = 403
-      err.title = 'Cannot delete review'
       return next(err)
     }
 
@@ -128,7 +124,6 @@ router.delete('/:reviewId', requireAuth, async (req, res, next) => {
 
   } catch (err) {
     err.status = 404
-    err.title = 'Bad Request'
     return next(err)
   }
 })

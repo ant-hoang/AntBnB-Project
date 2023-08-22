@@ -25,7 +25,6 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
     if (findBooking.userId !== +currUserId) {
       const err = new Error('Cannot edit a booking the user does not own')
       err.status = 403
-      err.title = 'Cannot edit a booking the user does not own'
       return next(err)
     }
 
@@ -34,7 +33,6 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
 
     if ((startDate > currStartDate && startDate < currEndDate) || (endDate > currStartDate && endDate < currEndDate) || (startDate < currStartDate && endDate > currEndDate)) {
       const err = new Error('Sorry, this spot is already booked for the specified dates')
-      err.title = 'Sorry, this spot is already booked for the specified dates'
       err.status = 403;
       err.errors = {
         startDate: "Start date conflicts with an existing booking",
@@ -49,7 +47,6 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
 
     if (editedCurrentDate > currEndDate) {
       const err = new Error('Past bookings can\'t be modified')
-      err.title = 'Past bookings can\'t be modified'
       err.status = 400;
       return next(err)
     }
@@ -63,7 +60,6 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
 
   } catch (err) {
     err.status = 404;
-    err.title = 'Bad request';
     return next(err);
   }
 })
@@ -78,7 +74,6 @@ router.delete('/:bookingId', requireAuth, async (req, res, next) => {
     if (!findBooking) throw new Error('Booking couldn\'t be found')
     if (findBooking.userId !== +currUserId) {
       const err = new Error('Current user does not own this booking')
-      err.title = 'Cannot delete booking'
       err.status = 403;
 
       return next(err)
@@ -90,7 +85,6 @@ router.delete('/:bookingId', requireAuth, async (req, res, next) => {
     if (editedCurrentDate > findBooking.startDate) {
       const err = new Error('Bookings that have been started can\'t be deleted')
       err.status = 403
-      err.title = 'Cannot delete booking'
       return next(err)
     }
 
@@ -99,7 +93,6 @@ router.delete('/:bookingId', requireAuth, async (req, res, next) => {
 
   } catch (err) {
     err.status = 404;
-    err.title = 'Bad request';
     return next(err);
   }
 

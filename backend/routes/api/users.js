@@ -26,10 +26,10 @@ router.get('/me/reviews', requireAuth, async (req, res, _next) => {
         attributes: ['id', 'firstName', 'lastName']
       },
       {
-       model: Spot,
-       attributes: {
-        exclude: ['createdAt', 'updatedAt']
-       } 
+        model: Spot,
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        }
       },
       {
         model: ReviewImage,
@@ -63,26 +63,29 @@ router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
 
-  try {
-
-    const user = await User.create({ email, username, hashedPassword, firstName, lastName });
-
-    const safeUser = user.toSafeUser()
-
-    await setTokenCookie(res, safeUser);
-
-    return res.json({
-      user: safeUser
-    });
-
-    // Fail-safe in case anything goes wrong
-  } catch (e) {
-    const err = new Error('Account creation failed');
-    err.status = 401;
-    err.title = 'Account creation failed';
-    err.errors = { message: 'Please check all fields match the required parameters.' };
-    return next(err);
+  const findExistingUser = await User.findOne({ where: { [Op.or]: [{ username: username }, { email: email }] } })
+  if (findExistingUser.email === email) {
+    const err = new Error('User already exists')
+    err.status = 500
+    err.errors = { email: "User with that email already exists" }
+    return next(err)
   }
+  if (findExistingUser.username === username) {
+    const err = new Error('User already exists')
+    err.status = 500
+    err.errors = { username: "User with that username already exists" }
+    return next(err)
+  }
+
+  const user = await User.create({ email, username, hashedPassword, firstName, lastName });
+
+  const safeUser = user.toSafeUser()
+
+  await setTokenCookie(res, safeUser);
+
+  return res.json({
+    user: safeUser
+  });
 
 }
 );
@@ -103,7 +106,6 @@ router.post('/login', validateLogin, async (req, res, next) => {
   if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
     const err = new Error('Login failed');
     err.status = 401;
-    err.title = 'Login failed';
     err.errors = { credential: 'The provided credentials were invalid.' };
     return next(err);
   }
