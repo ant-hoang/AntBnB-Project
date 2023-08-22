@@ -11,6 +11,7 @@ const { Spot } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
 const { Review } = require('../../db/models');
 const { Booking } = require('../../db/models');
+const { ReviewImage } = require('../../db/models');
 const { sequelize } = require('../../db/models')
 
 const router = express.Router();
@@ -60,10 +61,16 @@ router.get('/:spotId/reviews', requireAuth, async (req, res, next) => {
       where: {
         spotId: spotId
       },
-      include: {
-        model: User,
-        attributes: ['id', 'firstName', 'lastName']
-      }
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'firstName', 'lastName']
+        },
+        {
+          model: ReviewImage,
+          attributes: ['id', 'url']
+        }
+      ]
     })
 
     if (!findReviews.length) throw new Error('Cannot get reviews')
