@@ -52,7 +52,6 @@ router.get('/me', requireAuth, async (req, res) => {
 })
 
 // get all reviews from a specific spot
-// need to include ReviewImage Model
 router.get('/:spotId/reviews', requireAuth, async (req, res, next) => {
   const { spotId } = req.params
 
@@ -116,7 +115,6 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res, ne
 })
 
 // get all bookings for a spot based on spot ID
-// need to include ReviewImage model
 router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
   const { spotId } = req.params
   const currUserId = req.user.id

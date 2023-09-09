@@ -11,6 +11,7 @@ const { SpotImage } = require('../../db/models');
 
 const router = express.Router();
 
+// add preview image
 router.get('/me', requireAuth, async (req, res, _next) => {
   const { user } = req
   const myBookings = await Booking.findAll({
