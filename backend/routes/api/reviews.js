@@ -14,6 +14,7 @@ const { Review } = require('../../db/models');
 const router = express.Router();
 
 // add a preview image to Spot model
+// get current user reviews
 router.get('/me', requireAuth, async (req, res, _next) => {
   const { user } = req
   const myReviews = await Review.findAll({
@@ -59,15 +60,17 @@ router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) 
   const currUserId = req.user.id
 
   try {
-    const findReviewImage = await ReviewImage.findAll({ where: { id: imageId } })
-    if (!findReviewImage.length) throw new Error('Review image not found')
-    if (findReviewImage[0].userId !== +currUserId) {
+    const findReviewImage = await ReviewImage.findOne({ where: { id: imageId, reviewId: reviewId } })
+    const findReview = await Review.findOne({where: {id: reviewId}})
+
+    if (!findReviewImage) throw new Error('Review image not found')
+    if (findReview.userId !== +currUserId) {
       const err = new Error('Review image does not belong to current user')
       err.status = 403
       return next(err)
     }
 
-    await findReviewImage[0].destroy()
+    await findReviewImage.destroy()
 
     res.json({ message: "Successfully deleted" })
 

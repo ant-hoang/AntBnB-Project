@@ -215,8 +215,14 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
     }
 
     const newSpotImage = await SpotImage.create({ spotId, url, preview })
+    // console.log(newSpotImage)
+    // id, url, preview
 
-    res.json(newSpotImage)
+    res.json({
+      "id": newSpotImage.dataValues.id,
+      "url": newSpotImage.dataValues.url,
+      "preview": newSpotImage.dataValues.preview
+    })
 
   } catch (err) {
     err.status = 404;

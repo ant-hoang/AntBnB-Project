@@ -18,14 +18,30 @@ router.get('/me', requireAuth, async (req, res, _next) => {
     where: {
       userId: user.id
     },
-    include: {
-      model: Spot,
-      attributes: {
-        exclude: ['createdAt', 'updatedAt']
-      }
-    }
+    // include: {
+    //   model: Spot,
+    //   attributes: {
+    //     exclude: ['createdAt', 'updatedAt']
+    //   }
+    // }
   })
-  res.json({ Bookings: myBookings })
+
+  let bookings = []
+  for (let i = 0; i < myBookings.length; i++) {
+    let booking = myBookings[i].toJSON()
+    let spot = await Spot.findOne({where: {id: booking.spotId}, attributes: {exclude: ['createdAt', 'updatedAt', 'description']}})
+    let spotImage = await SpotImage.findOne({
+      where: { spotId: spot.id, preview: true }
+    })
+
+    if (spotImage) {
+      spot.dataValues.previewImage = spotImage.dataValues.url
+    }
+
+    booking.Spot = spot.toJSON()
+    bookings.push(booking)
+  }
+  res.json({ Bookings: bookings })
 })
 
 // edit a booking
