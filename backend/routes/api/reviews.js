@@ -13,6 +13,8 @@ const { Review } = require('../../db/models');
 
 const router = express.Router();
 
+// add a preview image to Spot model
+// get current user reviews
 router.get('/me', requireAuth, async (req, res, _next) => {
   const { user } = req
   const myReviews = await Review.findAll({
@@ -25,39 +27,53 @@ router.get('/me', requireAuth, async (req, res, _next) => {
         attributes: ['id', 'firstName', 'lastName']
       },
       {
-        model: Spot,
-        attributes: {
-          exclude: ['createdAt', 'updatedAt']
-        }
-      },
-      {
         model: ReviewImage,
         attributes: ['id', 'url']
       }
     ]
   })
 
-  res.json({ Reviews: myReviews })
+  let reviews = []
+
+  for (let i = 0; i < myReviews.length; i++) {
+    let review = myReviews[i].toJSON()
+    let spot = await Spot.findOne({ where: { id: review.spotId }, attributes: { exclude: ['createdAt', 'updatedAt', 'description'] } })
+    let spotImage = await SpotImage.findOne({
+      where: { spotId: spot.id, preview: true }
+    })
+
+    if (spotImage) {
+      spot.dataValues.previewImage = spotImage.dataValues.url
+    }
+
+    review.Spot = spot.toJSON()
+    
+    reviews.push(review)
+  }
+
+  res.json({ Reviews: reviews })
 })
 
 // delete an image from a review
 router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) => {
   const { reviewId, imageId } = req.params
   const currUserId = req.user.id
-  
+
   try {
-    const findReviewImage = await ReviewImage.findAll({ where: { id: imageId } })
-    if (!findReviewImage.length) throw new Error('Review image not found')
-    if (findReviewImage[0].userId !== +currUserId) {
+    const findReviewImage = await ReviewImage.findOne({ where: { id: imageId, reviewId: reviewId } })
+    const findReview = await Review.findOne({where: {id: reviewId}})
+
+    if (!findReviewImage) throw new Error('Review image not found')
+    if (findReview.userId !== +currUserId) {
       const err = new Error('Review image does not belong to current user')
       err.status = 403
       return next(err)
     }
-    
-    await findReviewImage[0].destroy()
-    
-    res.json({message: "Successfully deleted"})
-    
+
+    await findReviewImage.destroy()
+
+    res.json({ message: "Successfully deleted" })
+
   } catch (err) {
     err.status = 404
     return next(err)
