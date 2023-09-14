@@ -18,6 +18,16 @@ router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
 
+  const findExistingUser = await User.findOne({
+    where: { [Op.or]: [{ email: email }, { username: username }] }
+  })
+
+  if(findExistingUser) {
+    const err = new Error('user with that username and/or email already exists')
+    err.status = 500
+    return next(err)
+  }
+
   const user = await User.create({ email, username, hashedPassword, firstName, lastName });
 
   const safeUser = user.toSafeUser()
@@ -65,7 +75,7 @@ router.post('/login', validateLogin, async (req, res, next) => {
 );
 
 // Get current user
-router.get('/me', requireAuth, (req, res) => {
+router.get('/me', (req, res) => {
   const { user } = req;
   if (user) {
     const safeUser = user.toSafeUser()
