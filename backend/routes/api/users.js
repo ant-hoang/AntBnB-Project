@@ -85,8 +85,7 @@ router.get('/me', (req, res) => {
   } else {
     return res.json({ user: null });
   }
-}
-);
+});
 
 // logs out current session
 router.delete('/me', (_req, res) => {
