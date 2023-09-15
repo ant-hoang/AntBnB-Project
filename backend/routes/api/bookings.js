@@ -80,7 +80,7 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
 
     if (editedCurrentDate > currEndDate) {
       const err = new Error('Past bookings can\'t be modified')
-      err.status = 400;
+      err.status = 403;
       return next(err)
     }
 

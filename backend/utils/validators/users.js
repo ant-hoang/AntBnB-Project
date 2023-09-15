@@ -10,7 +10,8 @@ const validateLogin = [
     .withMessage('Please provide a valid email or username.'),
   check('password')
     .exists({ checkFalsy: true })
-    .withMessage('Please provide a password.'),
+    .notEmpty()
+    .withMessage('Password is required.'),
   handleValidationErrors
 ];
 
