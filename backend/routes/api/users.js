@@ -18,9 +18,8 @@ router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
 
-  const existingUsers = await User.findAll({
+  const existingUsers = await User.unscoped().findAll({
     where: { [Op.or]: [{ email: email }, { username: username }] },
-    attributes: {include: ['id', 'email', 'username', 'firstName', 'lastName']}
   })
 
   for(let i = 0; i < existingUsers.length; i++) {
