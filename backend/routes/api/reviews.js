@@ -40,11 +40,13 @@ router.get('/me', requireAuth, async (req, res, _next) => {
     const review = myReviews[i].toJSON()
     // console.log("ReviewJSON:", review)
     const spot = await Spot.findOne({ where: { id: review.spotId }, attributes: { exclude: ['createdAt', 'updatedAt', 'description'] } })
-    // console.log("Spot FINDONE:", spot)
-    const spotJSON = spot.toJSON()
+    console.log("Spot FINDONE:", spot)
+    // const spotJSON = spot.toJSON()
+    console.log("Spot ID:", spot.dataValues.id)
     const spotImage = await SpotImage.findOne({
-      where: { spotId: spotJSON.id, preview: true }
+      where: { spotId: spot.id, preview: true }
     })
+    console.log("SpotImage FOUND:", spotImage)
 
     if (spotImage) {
       spot.dataValues.previewImage = spotImage.dataValues.url
