@@ -206,10 +206,16 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
     const findSpot = await Spot.findByPk(+spotId)
 
     if (!findSpot) throw new Error('Spot couldn\'t be found')
-    console.log('ownerId:', findSpot.ownerId)
-    console.log('currUserId:', currUserId)
     if (findSpot.ownerId !== +currUserId) {
       const err = new Error('Current user does not own this spot')
+      err.status = 403
+      return next(err)
+    }
+
+    // limit images to only 10 images per spot
+    const countSpotImages = await SpotImage.findAll({where: {spotId: spotId}})
+    if(countSpotImages.length >= 10) {
+      const err = new Error('Maximum number of images for this resource was reached')
       err.status = 403
       return next(err)
     }

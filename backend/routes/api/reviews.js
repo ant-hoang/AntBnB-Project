@@ -36,10 +36,13 @@ router.get('/me', requireAuth, async (req, res, _next) => {
   let reviews = []
 
   for (let i = 0; i < myReviews.length; i++) {
+    // issue is somewhere here
     let review = myReviews[i].toJSON()
+    console.log("ReviewJSON:", review)
     let spot = await Spot.findOne({ where: { id: review.spotId }, attributes: { exclude: ['createdAt', 'updatedAt', 'description'] } })
+    console.log("Spot FINDONE:", spot)
     let spotImage = await SpotImage.findOne({
-      where: { spotId: spot.id, preview: true }
+      where: { spotId: spot.dataValues.id, preview: true }
     })
 
     if (spotImage) {
