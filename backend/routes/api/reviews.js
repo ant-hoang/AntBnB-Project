@@ -33,12 +33,13 @@ router.get('/me', requireAuth, async (req, res, _next) => {
     ]
   })
 
+  console.log("ALLMyReviews:", myReviews)
   let reviews = []
 
   for (let i = 0; i < myReviews.length; i++) {
     // issue is somewhere here
     const review = myReviews[i].toJSON()
-    // console.log("ReviewJSON:", review)
+    console.log("ReviewJSON:", review)
     const spot = await Spot.findOne({ where: { id: review.spotId }, attributes: { exclude: ['createdAt', 'updatedAt', 'description'] } })
     console.log("Spot FINDONE:", spot)
     // const spotJSON = spot.toJSON()
