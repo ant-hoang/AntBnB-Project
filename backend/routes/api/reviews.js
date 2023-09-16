@@ -13,7 +13,6 @@ const { Review } = require('../../db/models');
 
 const router = express.Router();
 
-// add a preview image to Spot model
 // get current user reviews
 router.get('/me', requireAuth, async (req, res, _next) => {
   const { user } = req
@@ -36,24 +35,18 @@ router.get('/me', requireAuth, async (req, res, _next) => {
   let reviews = []
 
   for (let i = 0; i < myReviews.length; i++) {
-    // issue is somewhere here
     const review = myReviews[i].toJSON()
-    // console.log("ReviewJSON:", review)
     const spot = await Spot.findOne({ where: { id: review.spotId }, attributes: { exclude: ['createdAt', 'updatedAt', 'description'] } })
-    console.log("Spot FINDONE:", spot)
-    // const spotJSON = spot.toJSON()
-    console.log("Spot ID:", spot.dataValues.id)
     const spotImage = await SpotImage.findOne({
       where: { spotId: spot.id, preview: true }
     })
-    console.log("SpotImage FOUND:", spotImage)
 
     if (spotImage) {
       spot.dataValues.previewImage = spotImage.dataValues.url
     }
 
     review.Spot = spot.toJSON()
-    
+
     reviews.push(review)
   }
 
@@ -67,11 +60,11 @@ router.delete('/:reviewId/images/:imageId', requireAuth, async (req, res, next) 
 
   try {
     const findReviewImage = await ReviewImage.findOne({ where: { id: imageId, reviewId: reviewId } })
-    const findReview = await Review.findOne({where: {id: reviewId}})
+    const findReview = await Review.findOne({ where: { id: reviewId } })
 
     if (!findReviewImage) throw new Error('Review image not found')
     if (findReview.userId !== +currUserId) {
-      const err = new Error('Review image does not belong to current user')
+      const err = new Error('Forbidden')
       err.status = 403
       return next(err)
     }
@@ -96,7 +89,7 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
     const findReview = await Review.findByPk(+reviewId)
     if (!findReview) throw new Error('Review couldn\'t be found')
     if (findReview.userId !== +currUserId) {
-      const err = new Error('Review does not belong to current user')
+      const err = new Error('Forbidden')
       err.status = 403
       return next(err)
     }
@@ -138,8 +131,6 @@ router.put('/:reviewId', requireAuth, validateReview, async (req, res, next) => 
 
     if (!findReview.length) throw new Error("Review couldn\'t be found")
 
-
-
     const editedReview = await findReview[0].update({
       review: review,
       stars: stars
@@ -163,7 +154,7 @@ router.delete('/:reviewId', requireAuth, async (req, res, next) => {
     const findReview = await Review.findByPk(+reviewId)
     if (!findReview) throw new Error('Review couldn\'t be found')
     if (findReview.userId !== +currUserId) {
-      const err = new Error('Review does not belong to current user')
+      const err = new Error('Forbidden')
       err.status = 403
       return next(err)
     }
