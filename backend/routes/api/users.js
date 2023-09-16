@@ -22,8 +22,15 @@ router.post('/signup', validateSignup, async (req, res, next) => {
     where: { [Op.or]: [{ email: email }, { username: username }] }
   })
 
-  if(findExistingUser) {
-    const err = new Error('user with that username and/or email already exists')
+  if (findExistingUser.email === email) {
+    const err = new Error('User already exists')
+    err.errors = { "email": "User with email already exists" }
+    err.status = 500
+    return next(err)
+  }
+  if (findExistingUser.username === username) {
+    const err = new Error('User already exists')
+    err.errors = { "username": "User with username already exists" }
     err.status = 500
     return next(err)
   }
@@ -54,9 +61,8 @@ router.post('/login', validateLogin, async (req, res, next) => {
   });
 
   if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
-    const err = new Error('Login failed');
+    const err = new Error('Invalid credentials');
     err.status = 401;
-    err.errors = { credential: 'The provided credentials were invalid.' };
     return next(err);
   }
 
@@ -91,8 +97,7 @@ router.get('/me', (req, res) => {
 router.delete('/me', (_req, res) => {
   res.clearCookie('token');
   return res.json({ message: 'success' });
-}
-);
+});
 
 
 module.exports = router
