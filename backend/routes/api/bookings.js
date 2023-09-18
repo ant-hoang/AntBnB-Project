@@ -60,18 +60,24 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
     }})
 
     for(let i = 0; i < existingBookings.length; i++) {
-      const currExistBooking = existingBookings[i]
-      const currStartDate = currExistBooking.startDate
-      const currEndDate = currExistBooking.endDate
-  
-      if ((startDate > currStartDate && startDate < currEndDate) || (endDate > currStartDate && endDate < currEndDate) || (startDate < currStartDate && endDate > currEndDate)) {
+      let currStartDate = existingBookings[i].startDate
+      let currEndDate = existingBookings[i].endDate
+
+      if ((startDate >= currStartDate && startDate <= currEndDate) || (endDate >= currStartDate && endDate <= currEndDate) || (startDate <= currStartDate && endDate >= currEndDate)) {
         const err = new Error('Sorry, this spot is already booked for the specified dates')
         err.status = 403;
-        err.errors = {
-          startDate: "Start date conflicts with an existing booking",
-          endDate: "End date conflicts with an existing booking"
+        listOfErrors = {}
+        if (startDate >= currStartDate && startDate <= currEndDate) {
+          listOfErrors.startDate = "Start date conflicts with an existing booking"
         }
-  
+        if (endDate >= currStartDate && endDate <= currEndDate) {
+          listOfErrors.endDate = "End date conflicts with an existing booking"
+        }
+        if (startDate < currStartDate && endDate > currEndDate) {
+          listOfErrors.startDate = "Start date conflicts with an existing booking"
+          listOfErrors.endDate = "End date conflicts with an existing booking"
+        }
+        err.errors = listOfErrors
         return next(err)
       }
     }
