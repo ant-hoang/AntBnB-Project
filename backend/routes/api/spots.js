@@ -42,8 +42,8 @@ router.get('/me', requireAuth, async (req, res) => {
 
     if (spotImage) {
       spot.previewImage = spotImage.url
-      spots.push(spot)
     }
+    spots.push(spot)
   }
 
 
