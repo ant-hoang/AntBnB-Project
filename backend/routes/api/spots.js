@@ -177,17 +177,17 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
         const err = new Error('Sorry, this spot is already booked for the specified dates')
         err.status = 403;
         listOfErrors = {}
-        if (startDate <= currStartDate && endDate >= currEndDate) {
-          listOfErrors.startDate = "Start date conflicts with an existing booking"
-          listOfErrors.endDate = "End date conflicts with an existing booking"
-        }
         if (startDate >= currStartDate && startDate <= currEndDate) {
           listOfErrors.startDate = "Start date conflicts with an existing booking"
         }
-
         if (endDate >= currStartDate && endDate <= currEndDate) {
           listOfErrors.endDate = "End date conflicts with an existing booking"
         }
+        if (startDate < currStartDate && endDate > currEndDate) {
+          listOfErrors.startDate = "Start date conflicts with an existing booking"
+          listOfErrors.endDate = "End date conflicts with an existing booking"
+        }
+
         err.errors = listOfErrors
         return next(err)
       }
@@ -227,6 +227,15 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
       return next(err)
     }
 
+    for (let i = 0; i < countSpotImages.length; i++) {
+      const currSpotImage = countSpotImages[i]
+      if (currSpotImage.preview) {
+        const err = new Error('User has already set a preview image for this spot')
+        err.status = 500
+        return next(err)
+      }
+    }
+
     const newSpotImage = await SpotImage.create({ spotId, url, preview })
 
     res.json({
@@ -264,7 +273,7 @@ router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) =>
       }
     })
 
-    if (!getSpotImage.length) throw new Error('Spot/Image couldn\'t be found')
+    if (!getSpotImage.length) throw new Error('Spot Image couldn\'t be found')
 
     await getSpotImage[0].destroy()
 
@@ -286,30 +295,26 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
   try {
     const findSpot = await Spot.findByPk(+spotId)
 
-    let checkFound = Object.keys(findSpot)
-    if (!checkFound.length) {
-      throw new Error('Spot couldn\'t be found')
-
-    } else if (findSpot.ownerId !== +currUserId) {
+    if (!findSpot) throw new Error('Spot couldn\'t be found')
+    if (findSpot.ownerId !== +currUserId) {
       const err = new Error('Forbidden')
       err.status = 403
       return next(err)
-
-    } else {
-      const editedSpot = await findSpot.update({
-        address: address,
-        city: city,
-        state: state,
-        country: country,
-        lat: lat,
-        lng: lng,
-        name: name,
-        description: description,
-        price: price
-      })
-
-      res.json(editedSpot)
     }
+
+    const editedSpot = await findSpot.update({
+      address: address,
+      city: city,
+      state: state,
+      country: country,
+      lat: lat,
+      lng: lng,
+      name: name,
+      description: description,
+      price: price
+    })
+
+    res.json(editedSpot)
 
   } catch (err) {
     err.status = 404
@@ -367,7 +372,6 @@ router.get('/:spotId', async (req, res, next) => {
     })
 
     if (!allSpots.length) throw new Error()
-
     let spots = []
 
     for (let i = 0; i < allSpots.length; i++) {
@@ -387,8 +391,8 @@ router.get('/:spotId', async (req, res, next) => {
 
       if (spotImage) {
         spot.previewImage = spotImage.url
-        spots.push(spot)
       }
+      spots.push(spot)
     }
 
     res.json({ "Spots": spots })
@@ -400,19 +404,10 @@ router.get('/:spotId', async (req, res, next) => {
   }
 })
 
-
-
 // Create a spot
-router.post('/', requireAuth, validateSpot, async (req, res, next) => {
+router.post('/', requireAuth, validateSpot, async (req, res, _next) => {
   const { address, city, state, country, lat, lng, name, description, price } = req.body
   const ownerId = req.user.id
-  const currentSpots = await Spot.findAll({
-    where: {
-      [Op.or]: {
-        address: address
-      }
-    }
-  })
 
   const newSpot = await Spot.create({ ownerId, address, city, state, country, lat, lng, name, description, price })
 
@@ -467,8 +462,8 @@ router.get('/', validateQuery, async (req, res, next) => {
 
       if (spotImage) {
         spot.previewImage = spotImage.url
-        spots.push(spot)
       }
+      spots.push(spot)
     }
 
 
@@ -493,8 +488,8 @@ router.get('/', validateQuery, async (req, res, next) => {
 
       if (spotImage) {
         spot.previewImage = spotImage.url
-        spots.push(spot)
       }
+      spots.push(spot)
     }
 
     res.json({ "Spots": spots })

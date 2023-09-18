@@ -18,21 +18,24 @@ router.post('/signup', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
 
-  const findExistingUser = await User.findOne({
-    where: { [Op.or]: [{ email: email }, { username: username }] }
+  const existingUsers = await User.unscoped().findAll({
+    where: { [Op.or]: [{ email: email }, { username: username }] },
   })
 
-  if (findExistingUser.email === email) {
-    const err = new Error('User already exists')
-    err.errors = { "email": "User with email already exists" }
-    err.status = 500
-    return next(err)
-  }
-  if (findExistingUser.username === username) {
-    const err = new Error('User already exists')
-    err.errors = { "username": "User with username already exists" }
-    err.status = 500
-    return next(err)
+  for(let i = 0; i < existingUsers.length; i++) {
+    const currUser = existingUsers[i]
+    if (currUser.email === email) {
+      const err = new Error('User already exists')
+      err.errors = { "email": "User with email already exists" }
+      err.status = 500
+      return next(err)
+    }
+    if (currUser.username === username) {
+      const err = new Error('User already exists')
+      err.errors = { "username": "User with username already exists" }
+      err.status = 500
+      return next(err)
+    }
   }
 
   const user = await User.create({ email, username, hashedPassword, firstName, lastName });

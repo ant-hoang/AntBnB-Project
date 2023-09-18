@@ -48,36 +48,49 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
     const findBooking = await Booking.findByPk(+bookingId)
 
     if (!findBooking) throw new Error('Booking coultn\'t be found')
-
     if (findBooking.userId !== +currUserId) {
       const err = new Error('Forbidden')
       err.status = 403
       return next(err)
     }
 
-    const currStartDate = findBooking.startDate
-    const currEndDate = findBooking.endDate
+    const existingBookings = await Booking.findAll({where: {
+      spotId: findBooking.spotId,
+      [Op.not]: {id: bookingId}
+    }})
 
-    if ((startDate > currStartDate && startDate < currEndDate) || (endDate > currStartDate && endDate < currEndDate) || (startDate < currStartDate && endDate > currEndDate)) {
-      const err = new Error('Sorry, this spot is already booked for the specified dates')
-      err.status = 403;
-      err.errors = {
-        startDate: "Start date conflicts with an existing booking",
-        endDate: "End date conflicts with an existing booking"
+    for(let i = 0; i < existingBookings.length; i++) {
+      let currStartDate = existingBookings[i].startDate
+      let currEndDate = existingBookings[i].endDate
+
+      if ((startDate >= currStartDate && startDate <= currEndDate) || (endDate >= currStartDate && endDate <= currEndDate) || (startDate <= currStartDate && endDate >= currEndDate)) {
+        const err = new Error('Sorry, this spot is already booked for the specified dates')
+        err.status = 403;
+        listOfErrors = {}
+        if (startDate >= currStartDate && startDate <= currEndDate) {
+          listOfErrors.startDate = "Start date conflicts with an existing booking"
+        }
+        if (endDate >= currStartDate && endDate <= currEndDate) {
+          listOfErrors.endDate = "End date conflicts with an existing booking"
+        }
+        if (startDate < currStartDate && endDate > currEndDate) {
+          listOfErrors.startDate = "Start date conflicts with an existing booking"
+          listOfErrors.endDate = "End date conflicts with an existing booking"
+        }
+        err.errors = listOfErrors
+        return next(err)
       }
-
-      return next(err)
     }
 
     let currentDate = new Date()
     let editedCurrentDate = currentDate.toISOString().slice(0, 10)
 
-    if (editedCurrentDate > currEndDate) {
+    if (editedCurrentDate > findBooking.endDate) {
       const err = new Error('Past bookings can\'t be modified')
       err.status = 403;
       return next(err)
     }
-
+    
     const editedBooking = await findBooking.update({
       startDate: startDate,
       endDate: endDate
