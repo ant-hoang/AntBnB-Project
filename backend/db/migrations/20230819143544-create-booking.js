@@ -16,11 +16,13 @@ module.exports = {
       },
       spotId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        onDelete: 'cascade'
       },
       userId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        onDelete: 'cascade'
       },
       startDate: {
         type: Sequelize.DATEONLY,

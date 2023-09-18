@@ -16,7 +16,8 @@ module.exports = {
       },
       reviewId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        onDelete: 'cascade'
       },
       url: {
         type: Sequelize.STRING,
