@@ -1,10 +1,7 @@
 // backend/routes/api/bookings.js
 const express = require('express');
-const { Op } = require('sequelize')
-const bcrypt = require('bcryptjs');
 const { validateReview } = require('../../utils/validators/reviews')
-const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { Booking } = require('../../db/models');
+const { requireAuth } = require('../../utils/auth');
 const { Spot } = require('../../db/models');
 const { User } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
@@ -14,7 +11,7 @@ const { Review } = require('../../db/models');
 const router = express.Router();
 
 // get current user reviews
-router.get('/me', requireAuth, async (req, res, _next) => {
+router.get('/current', requireAuth, async (req, res, _next) => {
   const { user } = req
   const myReviews = await Review.findAll({
     where: {
@@ -95,7 +92,7 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
     }
 
     const numReviewImages = await ReviewImage.findAll({ where: { reviewId: reviewId } })
-    if (numReviewImages.length > 10) {
+    if (numReviewImages.length > 9) {
       const err = new Error('Maximum number of images for this resource was reached')
       err.status = 403
       return next(err)
@@ -109,9 +106,6 @@ router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
     err.status = 404
     return next(err)
   }
-
-
-
 })
 
 

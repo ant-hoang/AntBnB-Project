@@ -1,11 +1,10 @@
 // backend/routes/api/spots.js
 const express = require('express');
 const { Op } = require('sequelize')
-const bcrypt = require('bcryptjs');
 const { validateQuery, validateSpot } = require('../../utils/validators/spots')
 const { validateBooking } = require('../../utils/validators/bookings')
 const { validateReview } = require('../../utils/validators/reviews')
-const { setTokenCookie, requireAuth } = require('../../utils/auth');
+const { requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
 const { Spot } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
@@ -18,7 +17,7 @@ const router = express.Router();
 
 
 // Get all Spots by the current user
-router.get('/me', requireAuth, async (req, res) => {
+router.get('/current', requireAuth, async (req, res) => {
   const currentUserId = req.user.id
   const allSpots = await Spot.findAll({
     where: {
@@ -250,41 +249,6 @@ router.post('/:spotId/images', requireAuth, async (req, res, next) => {
   }
 })
 
-// delete an image from a spot
-router.delete('/:spotId/images/:imageId', requireAuth, async (req, res, next) => {
-  const { spotId, imageId } = req.params
-  const currUserId = req.user.id
-
-
-  try {
-    const findSpot = await Spot.findByPk(+spotId)
-    if (findSpot.ownerId !== +currUserId) {
-      const err = new Error('Forbidden')
-      err.status = 403
-      return next(err)
-    }
-
-    const getSpotImage = await SpotImage.findAll({
-      where: {
-        [Op.and]: [
-          { spotId: spotId },
-          { id: imageId }
-        ]
-      }
-    })
-
-    if (!getSpotImage.length) throw new Error('Spot Image couldn\'t be found')
-
-    await getSpotImage[0].destroy()
-
-    res.json({ message: "Successfully deleted" })
-
-  } catch (err) {
-    err.status = 404;
-    return next(err);
-  }
-})
-
 // Edit a spot
 router.put('/:spotId', requireAuth, validateSpot, async (req, res, next) => {
 
@@ -344,9 +308,6 @@ router.delete('/:spotId', requireAuth, async (req, res, next) => {
     return next(err);
   }
 })
-
-
-
 
 // get a specific spot
 router.get('/:spotId', async (req, res, next) => {

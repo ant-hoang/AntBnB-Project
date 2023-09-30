@@ -50,7 +50,7 @@ Returns the information about the current user that is logged in.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: /users/me
+  * URL: /session
   * Body: none
 
 * Successful Response when there is a logged in user
@@ -91,7 +91,7 @@ information.
 * Require Authentication: false
 * Request
   * Method: POST
-  * URL: /users/login
+  * URL: /session
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -157,7 +157,7 @@ user's information.
 * Require Authentication: false
 * Request
   * Method: POST
-  * URL: /users/signup
+  * URL: /users
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -287,7 +287,7 @@ Returns all the spots owned (created) by the current user.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: /spots/me
+  * URL: /spots/current
   * Body: none
 
 * Successful Response
@@ -634,7 +634,7 @@ Returns all the reviews written by the current user.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: /reviews/me
+  * URL: /reviews/current
   * Body: none
 
 * Successful Response
@@ -982,7 +982,7 @@ Return all the bookings that the current user has made.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: /bookings/me
+  * URL: /bookings/current
   * Body: none
 
 * Successful Response
@@ -1317,7 +1317,7 @@ Delete an existing image for a Spot.
 * Require proper authorization: Spot must belong to the current user
 * Request
   * Method: DELETE
-  * URL: /spots/:spotId/images/:imageId
+  * URL: /spots-images/:imageId
   * Body: none
 
 * Successful Response
@@ -1352,7 +1352,7 @@ Delete an existing image for a Review.
 * Require proper authorization: Review must belong to the current user
 * Request
   * Method: DELETE
-  * URL: /reviews/:reviewId/images/image:id
+  * URL: /review-images/:imageId
   * Body: none
 
 * Successful Response
@@ -1386,7 +1386,7 @@ Return spots filtered by query parameters.
 * Require Authentication: false
 * Request
   * Method: GET
-  * URL: /spots?
+  * URL: /spots
   * Query Parameters
     * page: integer, minimum: 1, maximum: 10, default: 1
     * size: integer, minimum: 1, maximum: 20, default: 20
