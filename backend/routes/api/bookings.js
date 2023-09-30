@@ -1,18 +1,16 @@
 // backend/routes/api/bookings.js
 const express = require('express');
 const { Op } = require('sequelize')
-const bcrypt = require('bcryptjs');
 const { validateBooking } = require('../../utils/validators/bookings')
-const { setTokenCookie, requireAuth } = require('../../utils/auth');
+const { requireAuth } = require('../../utils/auth');
 const { Booking } = require('../../db/models');
 const { Spot } = require('../../db/models');
-const { User } = require('../../db/models');
 const { SpotImage } = require('../../db/models');
 
 const router = express.Router();
 
-// add preview image
-router.get('/me', requireAuth, async (req, res, _next) => {
+// get current user bookings
+router.get('/current', requireAuth, async (req, res, _next) => {
   const { user } = req
   const myBookings = await Booking.findAll({
     where: {
