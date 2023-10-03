@@ -1317,7 +1317,7 @@ Delete an existing image for a Spot.
 * Require proper authorization: Spot must belong to the current user
 * Request
   * Method: DELETE
-  * URL: /spot-image/:imageId
+  * URL: /spot-images/:imageId
   * Body: none
 
 * Successful Response
