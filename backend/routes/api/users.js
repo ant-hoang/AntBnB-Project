@@ -10,7 +10,7 @@ const router = express.Router();
 
 
 // Sign up
-router.post('/signup', validateSignup, async (req, res, next) => {
+router.post('/', validateSignup, async (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
 
