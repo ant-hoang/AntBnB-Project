@@ -119,11 +119,15 @@ router.put('/:reviewId', requireAuth, validateReview, async (req, res, next) => 
     const findReview = await Review.findAll({
       where: {
         id: reviewId,
-        userId: userId
       }
     })
 
     if (!findReview.length) throw new Error("Review couldn\'t be found")
+    if (findReview.userId !== +userId) {
+      const err = new Error('Forbidden')
+      err.status = 403
+      return next(err)
+    }
 
     const editedReview = await findReview[0].update({
       review: review,
