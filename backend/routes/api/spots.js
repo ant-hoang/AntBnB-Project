@@ -83,7 +83,7 @@ router.get('/:spotId/reviews', requireAuth, async (req, res, next) => {
 
 // create a review for a specific spot
 router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res, next) => {
-  const { spotId } = req.params
+  let { spotId } = req.params
   const { review, stars } = req.body
   const userId = req.user.id
 
@@ -103,8 +103,10 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async (req, res, ne
 
     const findSpot = await Spot.findByPk(+spotId)
     if (!findSpot) throw new Error('Spot couldn\'t be found')
+    spotId = parseInt(spotId)
 
     const newReview = await Review.create({ userId, spotId, review, stars })
+    res.status(201)
     res.json(newReview)
   } catch (err) {
     err.status = 404;
@@ -161,7 +163,7 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
     const findSpot = await Spot.findByPk(+spotId)
     const findBooking = await Booking.findAll({ where: { spotId: spotId } })
 
-    if (!findSpot) throw new Error('Spot coultn\'t be found')
+    if (!findSpot) throw new Error('Spot couldn\'t be found')
     if (findSpot.ownerId === +userId) {
       const err = new Error('Forbidden')
       err.status = 403
@@ -356,7 +358,7 @@ router.get('/:spotId', async (req, res, next) => {
       spots.push(spot)
     }
 
-    res.json({ "Spots": spots })
+    res.json({ "Spots": spots[0] })
 
   } catch (err) {
     err.message = 'Spot couldn\'t be found'
@@ -372,6 +374,7 @@ router.post('/', requireAuth, validateSpot, async (req, res, _next) => {
 
   const newSpot = await Spot.create({ ownerId, address, city, state, country, lat, lng, name, description, price })
 
+  res.status(201)
   res.json(newSpot)
 })
 
