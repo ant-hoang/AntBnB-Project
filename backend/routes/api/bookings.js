@@ -45,7 +45,7 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
   try {
     const findBooking = await Booking.findByPk(+bookingId)
 
-    if (!findBooking) throw new Error('Booking coultn\'t be found')
+    if (!findBooking) throw new Error('Booking couldn\'t be found')
     if (findBooking.userId !== +currUserId) {
       const err = new Error('Forbidden')
       err.status = 403
