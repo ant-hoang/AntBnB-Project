@@ -21,7 +21,7 @@ router.get('/current', requireAuth, async (req, res, _next) => {
   let bookings = []
   for (let i = 0; i < myBookings.length; i++) {
     let booking = myBookings[i].toJSON()
-    let spot = await Spot.findOne({where: {id: booking.spotId}, attributes: {exclude: ['createdAt', 'updatedAt', 'description']}})
+    let spot = await Spot.findOne({ where: { id: booking.spotId }, attributes: { exclude: ['createdAt', 'updatedAt', 'description'] } })
     let spotImage = await SpotImage.findOne({
       where: { spotId: spot.id, preview: true }
     })
@@ -52,12 +52,30 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
       return next(err)
     }
 
-    const existingBookings = await Booking.findAll({where: {
-      spotId: findBooking.spotId,
-      [Op.not]: {id: bookingId}
-    }})
+    if (startDate >= endDate) {
+      const err = new Error('Bad Request')
+      err.errors = 'endDate cannot be on or before startDate'
+      err.status = 400
+      return next(err)
+    }
 
-    for(let i = 0; i < existingBookings.length; i++) {
+    let valueDate = Date.parse(startDate);
+    let todayDate = Date.now();
+    if (valueDate < todayDate) {
+      const err = new Error('cannot book a spot before the present date')
+      err.status = 403
+      return next(err)
+    }
+
+    const existingBookings = await Booking.findAll({
+      where: {
+        spotId: findBooking.spotId,
+        [Op.not]: { id: bookingId }
+      }
+    })
+
+
+    for (let i = 0; i < existingBookings.length; i++) {
       let currStartDate = existingBookings[i].startDate
       let currEndDate = existingBookings[i].endDate
 
@@ -88,7 +106,7 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
       err.status = 403;
       return next(err)
     }
-    
+
     const editedBooking = await findBooking.update({
       startDate: startDate,
       endDate: endDate
