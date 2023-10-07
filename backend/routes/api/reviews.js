@@ -123,7 +123,7 @@ router.put('/:reviewId', requireAuth, validateReview, async (req, res, next) => 
     })
 
     if (!findReview.length) throw new Error("Review couldn\'t be found")
-    if (findReview.userId !== +userId) {
+    if (findReview[0].userId !== +userId) {
       const err = new Error('Forbidden')
       err.status = 403
       return next(err)

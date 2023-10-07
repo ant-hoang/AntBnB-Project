@@ -13,6 +13,10 @@ const validateReview = [
     .exists({ checkFalsy: true })
     .notEmpty()
     .isNumeric()
+    .custom((value) => {
+      if (value < 0) throw new Error('Stars must be an integer from 1 to 5')
+      return true
+    })
     .withMessage('Stars must be an integer from 1 to 5'),
   handleValidationErrors
 ];
