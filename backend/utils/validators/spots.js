@@ -84,6 +84,10 @@ const validateSpot = [
   check('price')
     .exists({ checkFalsy: true })
     .isNumeric()
+    .custom((value) => {
+      if (value < 0) throw new Error('Price per day is required')
+      return true
+    })
     .withMessage('Price per day is required.'),
   handleValidationErrors
 ];

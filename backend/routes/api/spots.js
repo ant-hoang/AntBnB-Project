@@ -50,7 +50,7 @@ router.get('/current', requireAuth, async (req, res) => {
 })
 
 // get all reviews from a specific spot
-router.get('/:spotId/reviews', requireAuth, async (req, res, next) => {
+router.get('/:spotId/reviews', async (req, res, next) => {
   const { spotId } = req.params
 
   try {
@@ -123,7 +123,7 @@ router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
     const getSpot = await Spot.findByPk(+spotId)
     if (!getSpot) throw new Error('Spot couldn\'t be found')
 
-    if (currUserId === getSpot.id) {
+    if (currUserId === getSpot.ownerId) {
       const getBooking = await Booking.findAll({
         where: {
           spotId: spotId
@@ -169,6 +169,22 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
       err.status = 403
       return next(err)
     }
+
+    if (startDate >= endDate) {
+      const err = new Error('Bad Request')
+      err.errors = { endDate: 'endDate cannot be on or before startDate' }
+      err.status = 400
+      return next(err)
+    }
+
+    let valueDate = Date.parse(startDate);
+    let todayDate = Date.now();
+    if (valueDate < todayDate) {
+      const err = new Error('cannot book a spot before the present date')
+      err.status = 403
+      return next(err)
+    }
+
 
     for (let i = 0; i < findBooking.length; i++) {
       let currStartDate = findBooking[i].startDate

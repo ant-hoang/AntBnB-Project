@@ -31,25 +31,25 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATEONLY,
       allowNull: false,
       validate: {
-        isDate: true,
-        beforeEndDate(value) {
-          if (value > this.endDate) throw new Error('cannot book a spot after the endDate')
-        },
-        afterToday(value) {
-          let valueDate = Date.parse(value);
-          let currentDate = Date.now();
-          if (valueDate < currentDate) throw new Error('cannot book a spot before the present date')
-        }
+        isDate: true
+        // beforeEndDate(value) {
+        //   if (value > this.endDate) throw new Error('cannot book a spot after the endDate')
+        // },
+        // afterToday(value) {
+        //   let valueDate = Date.parse(value);
+        //   let currentDate = Date.now();
+        //   if (valueDate < currentDate) throw new Error('cannot book a spot before the present date')
+        // }
       }
     },
     endDate: {
       type: DataTypes.DATEONLY,
       allowNull: false,
       validate: {
-        isDate: true,
-        afterStartDate(value) {
-          if (value <= this.startDate) throw new Error('endDate cannot be on or before startDate')
-        }
+        isDate: true
+        // afterStartDate(value) {
+        //   if (value <= this.startDate) throw new Error('endDate cannot be on or before startDate')
+        // }
       }
     }
   }, {
