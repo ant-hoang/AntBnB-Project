@@ -11,6 +11,17 @@ const getSpot = () => {
 export const getSpots = () => async (dispatch) => {
   const response = await csrfFetch('/api/spots');
   const data = await response.json();
-  dispatch(getSpot())
+  dispatch(getSpot(data))
   return response;
 }
+
+const spotReducer = (state = {}, action) => {
+  let newStateswitch 
+  switch (action.type) {
+    case GET_SPOTS:
+      newState = Object.assign({}, state)
+      return newState;
+  }
+}
+
+export default spotReducer
