@@ -3,6 +3,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
+import GetSpots from '../GetSpots';
 import './Navigation.css';
 
 function Navigation({ isLoaded }) {
@@ -18,6 +19,9 @@ function Navigation({ isLoaded }) {
           <ProfileButton user={sessionUser} />
         </li>
       )}
+      <li>
+        <GetSpots />
+      </li>
     </ul>
   );
 }
