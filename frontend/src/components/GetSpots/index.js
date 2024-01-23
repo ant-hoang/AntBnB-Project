@@ -1,5 +1,5 @@
 import './GetSpots.css'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink } from "react-router-dom"
 import { fetchGetSpots } from '../../store/spots'
@@ -7,20 +7,12 @@ import { fetchGetSpots } from '../../store/spots'
 const GetSpots = () => {
 
   const dispatch = useDispatch();
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  const spotState = useSelector((state) => state.spots.allSpots)
+  const spotState = useSelector((state) => state.spots.allSpots) || {}
   const spots = Object.values(spotState)
 
   useEffect(() => {
     dispatch(fetchGetSpots())
-  }, [])
-
-  // function handleClick(e) {
-  //   e.preventDefault()
-  //   console.log('You clicked submit.')
-  //   alert("CLICKED!");
-  // }
+  }, [dispatch])
 
   return (
     <div className="spot-container">
@@ -52,11 +44,11 @@ const GetSpots = () => {
           </Route>
           <Route path={`/spots/:spotId`}>
             <SpotDetails />
-          </Route>
-          <Route>
+            </Route>
+            <Route>
             <h1>Page Not Found</h1>
-          </Route>
-        </Switch> */}
+            </Route>
+          </Switch> */}
       </nav>
     </div>
   )

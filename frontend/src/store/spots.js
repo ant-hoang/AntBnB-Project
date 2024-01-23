@@ -11,10 +11,10 @@ const getSpot = (currentSpots) => { // action creator
   }
 }
 
-const addSpot = (spots) => {
+const addSpot = (newSpot) => {
   return {
     type: ADD_SPOTS,
-    spots
+    newSpot
   }
 }
 
@@ -44,7 +44,7 @@ export const fetchGetSpots = () => async (dispatch) => { // thunk
     return spotData;
   }
 
-  return response
+  throw response
 }
 
 export const getSpotDetails = (spotId) => async (dispatch) => { // a callback within a callback function, or recursive functions
@@ -56,6 +56,8 @@ export const getSpotDetails = (spotId) => async (dispatch) => { // a callback wi
     dispatch(getSpotDetailsAC(detailedSpotData))
     return data
   }
+
+  throw res
 }
 
 export const createSpot = (payload) => async (dispatch) => {
@@ -70,6 +72,8 @@ export const createSpot = (payload) => async (dispatch) => {
     dispatch(addSpot(data))
     return data
   }
+
+  throw res
 }
 
 
