@@ -8,33 +8,42 @@ const SpotDetails = () => {
   const dispatch = useDispatch()
   const { spotId } = useParams()
   const id = parseInt(spotId)
-  let spot = useSelector((state) => state.spots.id)
-  const [isLoaded, setIsLoaded] = useState(false)
+  let spot = useSelector((state) => state.spots.spotDetails)
+
+  const handleReserve = (e) => {
+    e.preventDefault()
+    alert("Feature coming soon")
+  }
 
   useEffect(() => {
-    dispatch(getSpotDetails())
-      .then(() => setIsLoaded(true))
-    if (isLoaded) console.log(spot)
+    dispatch(getSpotDetails(spotId))
   }, [dispatch, id])
 
+  console.log("SPOT DETAILS:", spot)
 
   return (
     <div>
-      <h1>
-        Hello From Spot Details Component
-      </h1>
-      {/* <ul>
-        <li>
-          {spot.name}
-          {spot.address}
-          {spot.country}
-          {spot.state}
-          {spot.city}
-          {spot.avgRating}
-          {spot.description}
-          {spot.price}
-        </li>
-      </ul> */}
+      <div>
+        <h1>
+          Hello From Spots Components
+        </h1>
+      </div>
+      <div>{spot &&
+        <div className="heading">
+          <h1>{spot.name}</h1>
+          <h2>Location: {spot.city}, {spot.state}, {spot.country}</h2>
+          <img src={spot.previewImage}></img>
+          {/*imaging smaller images here coming soon */}
+          <div>
+            <span>Hosted by: {spot.Owner.firstName}, {spot.Owner.lastName}</span>
+            <p>{spot.description}</p>
+          </div>
+          <button onClick={handleReserve}>
+            Reserve
+          </button>
+        </div>
+      }
+      </div>
     </div>
   )
 }
