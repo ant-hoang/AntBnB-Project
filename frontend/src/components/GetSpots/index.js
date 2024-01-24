@@ -1,23 +1,31 @@
 import './GetSpots.css'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink } from "react-router-dom"
 import { fetchGetSpots } from '../../store/spots'
 
 const GetSpots = () => {
-
+  const [isLoading, setIsLoading] = useState(true)
+  const [errors, setErrors] = useState([])
   const dispatch = useDispatch();
-  const spotState = useSelector((state) => state.spots.allSpots) || {}
-  const spots = Object.values(spotState)
 
   useEffect(() => {
+    setIsLoading(true)
     dispatch(fetchGetSpots())
+      .then(() => setIsLoading(false))
+      .catch(async (res) => {
+        const errors = await res.json()
+        setErrors(errors)
+      })
   }, [dispatch])
+
+  const spotState = useSelector((state) => state.spots.allSpots) || {}
+  const spots = Object.values(spotState)
 
   return (
     <div className="spot-container">
       <nav>
-        {spots && spots.map((el) => {
+        {isLoading ? <h2>...Loading</h2> : spots.map((el) => {
           return (
             <div className="spot-block">
               <NavLink to={`/spots/${el.id}`}>
@@ -27,7 +35,7 @@ const GetSpots = () => {
                     <span>{el.city}, </span>
                     <span>{el.state}, </span>
                     <span>{el.avgRating ? el.avgRating : "New"}, </span>
-                    <span>${el.price} per Night</span>
+                    <span>${el.price} night</span>
                   </div>
                   <span class="tooltiptext">{el.name}</span>
                 </div>

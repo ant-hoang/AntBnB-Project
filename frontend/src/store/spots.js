@@ -26,10 +26,10 @@ const getSpotDetailsAC = (spotDetails) => {
 }
 
 export const fetchGetSpots = () => async (dispatch) => { // thunk
-  const response = await csrfFetch('/api/spots');
+  const res = await csrfFetch('/api/spots');
 
-  if (response.ok) {
-    const data = await response.json(); // converting this from json to javascript
+  if (res.ok) {
+    const data = await res.json(); // converting this from json to javascript
     const spotData = { allSpots: {} }
     for (let i = 0; i < data.Spots.length; i++) {
       let currentObj = data.Spots[i]
@@ -44,7 +44,7 @@ export const fetchGetSpots = () => async (dispatch) => { // thunk
     return spotData;
   }
 
-  throw response
+  return res
 }
 
 export const getSpotDetails = (spotId) => async (dispatch) => { // a callback within a callback function, or recursive functions
@@ -63,6 +63,7 @@ export const getSpotDetails = (spotId) => async (dispatch) => { // a callback wi
 export const createSpot = (payload) => async (dispatch) => {
   const res = await csrfFetch('/api/spots', {
     method: 'POST',
+    header: { 'Content-Type': 'application/json'},
     body: JSON.stringify(payload)
   })
 
@@ -85,6 +86,8 @@ const spotReducer = (state = {}, action) => {
       return { ...state, ...action.currentSpots }
     case SPOT_DETAILS:
       return { ...state, spotDetails: action.spotDetails }
+    case ADD_SPOTS:
+      return { ...state }
     default:
       return state
   }

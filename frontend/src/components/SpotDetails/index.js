@@ -7,7 +7,7 @@ import './SpotDetails.css'
 const SpotDetails = () => {
   const dispatch = useDispatch()
   const { spotId } = useParams()
-  const id = parseInt(spotId)
+  const [isLoading, setIsLoading] = useState(true)
   let spot = useSelector((state) => state.spots.spotDetails)
 
   const handleReserve = (e) => {
@@ -16,8 +16,9 @@ const SpotDetails = () => {
   }
 
   useEffect(() => {
-    dispatch(getSpotDetails(spotId))
-  }, [dispatch, id])
+    setIsLoading(true)
+    dispatch(getSpotDetails(spotId)).then(() => setIsLoading(false))
+  }, [dispatch, spotId])
 
   console.log("SPOT DETAILS:", spot)
 
@@ -28,7 +29,7 @@ const SpotDetails = () => {
           Hello From Spots Components
         </h1>
       </div>
-      <div>{spot &&
+      <div>{isLoading ? <h2>...Loading</h2> :
         <div className="heading">
           <h1>{spot.name}</h1>
           <h2>Location: {spot.city}, {spot.state}, {spot.country}</h2>
