@@ -14,8 +14,15 @@ export const fetchSpotReviews = (spotId) => async (dispatch) => {
 
   if (res.ok) {
     const data = await res.json()
+    const reviewData = {}
     for (let i = 0; i < data.Reviews.length; i++) {
       let currentObj = data.Reviews[i]
+      reviewData[currentObj.id] = currentObj
     }
+
+    dispatch(getReviews())
+    return reviewData
   }
+
+  return res
 }
