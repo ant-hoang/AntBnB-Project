@@ -7,6 +7,7 @@ import GetSpots from '../GetSpots';
 import SpotDetails from '../SpotDetails'
 import CreateSpot from '../CreateSpot'
 import './Navigation.css';
+import FavIcon from '../images/FavIcon.PNG'
 
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector(state => state.session.user);
@@ -16,16 +17,22 @@ function Navigation({ isLoaded }) {
     history.push("/")
   }
 
+  console.log("sessionUser: ", sessionUser)
   return (
     <ul>
       <li>
-        <NavLink exact to="/" onClick={handleHomeClick}>Home</NavLink>
+        <NavLink exact to="/" onClick={handleHomeClick}>
+          <img 
+          style={{height: 50, width: 75}}
+          src={FavIcon} 
+          alt='favIcon' />
+        </NavLink>
       </li>
-      {isLoaded && (
+      {isLoaded && sessionUser && (
         <li>
-          <NavLink to="/spots/new">
+          {<NavLink to="/spots/new">
             <button>Create a New Spot</button>
-          </NavLink>
+          </NavLink>}
         </li>
       )}
       {isLoaded && (

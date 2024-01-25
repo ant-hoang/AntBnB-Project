@@ -4,15 +4,18 @@ import { useDispatch } from 'react-redux'
 import { createSpot } from '../../store/spots'
 
 const CreateSpot = () => {
-  const [address, setAddress] = useState()
-  const [city, setCity] = useState()
-  const [state, setState] = useState()
-  const [country, setCountry] = useState()
-  const [lat, setLat] = useState()
-  const [lng, setLng] = useState()
-  const [name, setName] = useState()
-  const [description, setDescription] = useState()
-  const [price, setPrice] = useState()
+  const [address, setAddress] = useState("")
+  const [city, setCity] = useState("")
+  const [state, setState] = useState("")
+  const [country, setCountry] = useState("")
+  const [lat, setLat] = useState(null)
+  const [lng, setLng] = useState(null)
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
+  const [price, setPrice] = useState(null)
+  const [previewImage, setPreviewImage] = useState("")
+
+  const dispatch = useDispatch()
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,12 +33,25 @@ const CreateSpot = () => {
     }
 
     console.log("PAYLOAD:", payload)
-    
+
+    reset()
   }
 
-  useEffect(() => {
+  const reset = () => {
+    setAddress("")
+    setCity("")
+    setState("")
+    setCountry("")
+    setLat(null)
+    setLng(null)
+    setName("")
+    setDescription("")
+    setPrice(null)
+  }
+  // images into an array
 
-  }, [])
+
+
   return (
     <div>
       <h1>Create a New Spot</h1>
@@ -98,6 +114,10 @@ const CreateSpot = () => {
           />
         </div>
         <div>
+          <h2>Describe your place to guests</h2>
+          <caption>Mention the best features of your space, any special amentities like fast wifi or parking, and what you love about the neighborhood</caption>
+        </div>
+        <div>
           <label htmlFor="description">description</label>
           <input
             id="description"
@@ -105,6 +125,10 @@ const CreateSpot = () => {
             onChange={(e) => setDescription(e.target.value)}
             value={description}
           />
+        </div>
+        <div>
+          <h2>Create a title for your spot</h2>
+          <caption>Catch guest' attention with a spot title that highlights what makes your space special.</caption>
         </div>
         <div>
           <label htmlFor="name">name</label>
@@ -116,6 +140,10 @@ const CreateSpot = () => {
           />
         </div>
         <div>
+          <h2>Set a base price for your spot</h2>
+          <caption>Competitive pricing can help your listing stand out and rank higher in search results.</caption>
+        </div>
+        <div>
           <label htmlFor="price">price</label>
           <input
             id="price"
@@ -124,7 +152,59 @@ const CreateSpot = () => {
             value={price}
           />
         </div>
-        <button>Submit</button>
+        <div>
+          <h2>Liven up your spot with photos</h2>
+          <caption>Submit a link to at least one photo to publish your spot</caption>
+        </div>
+        <div>
+          {/* Preview Image Form */}
+          <div>
+            <input
+              id="image"
+              type="text"
+              placeholder='Preview Image Url'
+              onChange={(e) => setPreviewImage(e.target.value)}
+              value={previewImage}
+            />
+          </div>
+          <div>
+            <input
+              id="image"
+              type="text"
+              placeholder='Preview Image Url'
+              onChange={(e) => setPreviewImage(e.target.value)}
+              value={previewImage}
+            />
+          </div>
+          <div>
+            <input
+              id="image"
+              type="text"
+              placeholder='Preview Image Url'
+              onChange={(e) => setPreviewImage(e.target.value)}
+              value={previewImage}
+            />
+          </div>
+          <div>
+            <input
+              id="image"
+              type="text"
+              placeholder='Preview Image Url'
+              onChange={(e) => setPreviewImage(e.target.value)}
+              value={previewImage}
+            />
+          </div>
+          <div>
+            <input
+              id="country"
+              type="text"
+              placeholder='Preview Image Url'
+              onChange={(e) => setPreviewImage(e.target.value)}
+              value={previewImage}
+            />
+          </div>
+        </div>
+        <button>Create Spot</button>
       </form>
     </div>
   )

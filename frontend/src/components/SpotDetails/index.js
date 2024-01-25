@@ -24,11 +24,6 @@ const SpotDetails = () => {
 
   return (
     <div>
-      <div>
-        <h1>
-          Hello From Spots Components
-        </h1>
-      </div>
       <div>{isLoading ? <h2>...Loading</h2> :
         <div className="heading">
           <h1>{spot.name}</h1>
@@ -39,9 +34,11 @@ const SpotDetails = () => {
             <span>Hosted by: {spot.Owner.firstName}, {spot.Owner.lastName}</span>
             <p>{spot.description}</p>
           </div>
-          <button onClick={handleReserve}>
-            Reserve
-          </button>
+          <div>
+            <button onClick={handleReserve}>
+              Reserve
+            </button>
+          </div>
         </div>
       }
       </div>
