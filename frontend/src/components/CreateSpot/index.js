@@ -2,6 +2,7 @@ import './CreateSpot.css'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { createSpot } from '../../store/spots'
+import { createImage } from '../../store/images'
 
 const CreateSpot = () => {
   const [address, setAddress] = useState("")
@@ -14,11 +15,21 @@ const CreateSpot = () => {
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState(null)
   const [previewImage, setPreviewImage] = useState("")
+  const [image2, setImage2] = useState("")
+  const [image3, setImage3] = useState("")
+  const [image4, setImage4] = useState("")
+  const [image5, setImage5] = useState("")
+  const [errors, setErrors] = useState([])
 
   const dispatch = useDispatch()
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // setErrors([])
+    // const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price, previewImage)
+    // setErrors(errorList)
+    // if (errors.length) return
 
     const payload = {
       address,
@@ -32,9 +43,45 @@ const CreateSpot = () => {
       price
     }
 
-    console.log("PAYLOAD:", payload)
+    const images = settingImages(previewImage, image2, image3, image4, image5)
+
+    dispatch(createSpot(payload))
+      .then((spot) => {
+        for(let i = 0; i < images.length; i++) {
+          let currObj = images[i]
+          if(currObj.url) {
+            dispatch(createImage(currObj, spot.ownerId))
+          }
+        }
+      })
 
     reset()
+  }
+
+  const checkErrors = (address, city, state, country, lat, lng, name, description, price, previewImage) => {
+    const errorList = []
+    if (!country) errorList.push('Country is required')
+    if (!address) errorList.push('Address is required')
+    if (!city) errorList.push('City is required')
+    if (!state) errorList.push('State is required')
+    if (!lat) errorList.push('Latitude is required')
+    if (!lng) errorList.push('Longitude is required')
+    if (!description || description.length < 30) errorList.push('Description needs 30 or more characters')
+    if (!name) errorList.push('Name is required')
+    if (!price) errorList.push('Price is required')
+    if (!previewImage) errorList.push('Preview image is required')
+
+    return errorList
+  }
+
+  const settingImages = (i1, i2, i3, i4, i5) => {
+    const images = []
+    images.push({ "url": i1, "preview": true })
+    images.push({ "url": i2, "preview": false })
+    images.push({ "url": i3, "preview": false })
+    images.push({ "url": i4, "preview": false })
+    images.push({ "url": i5, "preview": false })
+    return images
   }
 
   const reset = () => {
@@ -47,13 +94,18 @@ const CreateSpot = () => {
     setName("")
     setDescription("")
     setPrice(null)
+    setPreviewImage("")
+    setImage2("")
+    setImage3("")
+    setImage4("")
+    setImage5("")
   }
-  // images into an array
-
-
 
   return (
     <div>
+      <ul className='errors'>
+        {errors.length ? errors.map((error) => <li key={error}>{error}</li>) : ''}
+      </ul>
       <h1>Create a New Spot</h1>
       <h2>Where's your place located?</h2>
       <caption>Guests will only get your exact address once they booked a reservation.</caption>
@@ -64,6 +116,7 @@ const CreateSpot = () => {
           <input
             id="country"
             type="text"
+            placeholder='Country'
             onChange={(e) => setCountry(e.target.value)}
             value={country}
           />
@@ -73,6 +126,7 @@ const CreateSpot = () => {
           <input
             id="address"
             type="text"
+            placeholder='Address'
             onChange={(e) => setAddress(e.target.value)}
             value={address}
           />
@@ -82,6 +136,7 @@ const CreateSpot = () => {
           <input
             id="city"
             type="text"
+            placeholder='City'
             onChange={(e) => setCity(e.target.value)}
             value={city}
           />
@@ -91,6 +146,7 @@ const CreateSpot = () => {
           <input
             id="state"
             type="text"
+            placeholder='STATE'
             onChange={(e) => setState(e.target.value)}
             value={state}
           />
@@ -100,6 +156,7 @@ const CreateSpot = () => {
           <input
             id="lat"
             type="text"
+            placeholder='Latitude'
             onChange={(e) => setLat(+e.target.value)}
             value={lat}
           />
@@ -109,6 +166,7 @@ const CreateSpot = () => {
           <input
             id="lng"
             type="text"
+            placeholder='Longitude'
             onChange={(e) => setLng(+e.target.value)}
             value={lng}
           />
@@ -118,10 +176,10 @@ const CreateSpot = () => {
           <caption>Mention the best features of your space, any special amentities like fast wifi or parking, and what you love about the neighborhood</caption>
         </div>
         <div>
-          <label htmlFor="description">description</label>
           <input
             id="description"
             type="text"
+            placeholder='Description'
             onChange={(e) => setDescription(e.target.value)}
             value={description}
           />
@@ -131,10 +189,10 @@ const CreateSpot = () => {
           <caption>Catch guest' attention with a spot title that highlights what makes your space special.</caption>
         </div>
         <div>
-          <label htmlFor="name">name</label>
           <input
             id="name"
             type="text"
+            placeholder='Name of your spot'
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
@@ -144,10 +202,10 @@ const CreateSpot = () => {
           <caption>Competitive pricing can help your listing stand out and rank higher in search results.</caption>
         </div>
         <div>
-          <label htmlFor="price">price</label>
           <input
             id="price"
             type="text"
+            placeholder='Price per night (USD)'
             onChange={(e) => setPrice(+e.target.value)}
             value={price}
           />
@@ -157,10 +215,9 @@ const CreateSpot = () => {
           <caption>Submit a link to at least one photo to publish your spot</caption>
         </div>
         <div>
-          {/* Preview Image Form */}
           <div>
             <input
-              id="image"
+              id="image-1"
               type="text"
               placeholder='Preview Image Url'
               onChange={(e) => setPreviewImage(e.target.value)}
@@ -169,38 +226,38 @@ const CreateSpot = () => {
           </div>
           <div>
             <input
-              id="image"
+              id="image-2"
               type="text"
-              placeholder='Preview Image Url'
-              onChange={(e) => setPreviewImage(e.target.value)}
-              value={previewImage}
+              placeholder='Image URL'
+              onChange={(e) => setImage2(e.target.value)}
+              value={image2}
             />
           </div>
           <div>
             <input
-              id="image"
+              id="image-3"
               type="text"
-              placeholder='Preview Image Url'
-              onChange={(e) => setPreviewImage(e.target.value)}
-              value={previewImage}
+              placeholder='Image URL'
+              onChange={(e) => setImage3(e.target.value)}
+              value={image3}
             />
           </div>
           <div>
             <input
-              id="image"
+              id="image-4"
               type="text"
-              placeholder='Preview Image Url'
-              onChange={(e) => setPreviewImage(e.target.value)}
-              value={previewImage}
+              placeholder='Image URL'
+              onChange={(e) => setImage4(e.target.value)}
+              value={image4}
             />
           </div>
           <div>
             <input
-              id="country"
+              id="image-5"
               type="text"
-              placeholder='Preview Image Url'
-              onChange={(e) => setPreviewImage(e.target.value)}
-              value={previewImage}
+              placeholder='Image URL'
+              onChange={(e) => setImage5(e.target.value)}
+              value={image5}
             />
           </div>
         </div>

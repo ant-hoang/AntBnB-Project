@@ -57,7 +57,7 @@ export const getSpotDetails = (spotId) => async (dispatch) => { // a callback wi
     return data
   }
 
-  throw res
+  return res
 }
 
 export const createSpot = (payload) => async (dispatch) => {
@@ -74,7 +74,7 @@ export const createSpot = (payload) => async (dispatch) => {
     return data
   }
 
-  throw res
+  return res
 }
 
 
@@ -87,7 +87,7 @@ const spotReducer = (state = {}, action) => {
     case SPOT_DETAILS:
       return { ...state, spotDetails: action.spotDetails }
     case ADD_SPOTS:
-      return { ...state }
+      return { ...state, newSpot: action.newSpot }
     default:
       return state
   }

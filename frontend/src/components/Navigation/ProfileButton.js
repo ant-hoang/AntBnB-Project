@@ -4,6 +4,7 @@ import * as sessionActions from '../../store/session';
 import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
+import './ProfileButton.css';
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
@@ -13,6 +14,11 @@ function ProfileButton({ user }) {
   const openMenu = () => {
     if (showMenu) return;
     setShowMenu(true);
+  };
+
+  const toggleMenu = (e) => {
+    e.stopPropagation();
+    setShowMenu(!showMenu);
   };
 
   useEffect(() => {
@@ -41,8 +47,16 @@ function ProfileButton({ user }) {
 
   return (
     <>
-      <button onClick={openMenu}>
+      <button onClick={toggleMenu}>
         <i className="fas fa-user-circle" /> 
+        <svg className="svg-icon"
+        role="img"
+        height="10"
+        width="10"
+        viewBox="0 0 10 10"
+        aria-hidden="true"
+        focusable="false">
+        </svg>
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user ? (
