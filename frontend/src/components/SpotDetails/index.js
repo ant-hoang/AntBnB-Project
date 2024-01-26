@@ -11,9 +11,10 @@ const SpotDetails = () => {
   const dispatch = useDispatch()
   const { spotId } = useParams()
   const [isLoading, setIsLoading] = useState(true)
+  let session = useSelector((state) => state.session)
   let spot = useSelector((state) => state.spots.spotDetails)
   let reviews = useSelector((state) => state.reviews.spotReviews)
-  let props = { spot, reviews }
+  let props = { session, spot, reviews }
 
   const handleReserve = (e) => {
     e.preventDefault()
