@@ -42,7 +42,7 @@ const GetSpots = () => {
                           src={star}
                           alt='star'
                         /> : ''}
-                        <span>{el.avgRating ? el.avgRating : "New"}</span>
+                        <span>{el.avgRating ? parseFloat(el.avgRating).toFixed(1) : "New"}</span>
                       </div>
                     </div>
                     <span>${el.price} night</span>

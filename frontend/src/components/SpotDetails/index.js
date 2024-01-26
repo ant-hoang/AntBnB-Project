@@ -49,7 +49,7 @@ const SpotDetails = () => {
                   src={star}
                   alt='star'
                 />
-                <span>{spot.avgRating ? spot.avgRating.toFixed(1) : "New"}</span>
+                <span>{spot.avgRating ? parseFloat(spot.avgRating).toFixed(1) : "New"}</span>
                 {!spot.numReviews ? null : spot.numReviews > 1 ? <span>{spot.numReviews} reviews</span> : <span>{spot.numReviews} review</span>}
               </div>
               <div className='reserve-button'>

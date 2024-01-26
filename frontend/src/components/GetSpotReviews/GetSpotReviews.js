@@ -23,7 +23,7 @@ const GetSpotReviews = ({ spot, reviews }) => {
           alt='star'
         />
         {!spot.avgRating ? <span>New</span> :
-          <span> {spot.avgRating.toFixed(1)} &#x2022; {spot.numReviews > 1 ? <span>{spot.numReviews} reviews</span> : <span>{spot.numReviews} review</span>} </span>}
+          <span> {spot.avgRating} &#x2022; {spot.numReviews > 1 ? <span>{spot.numReviews} reviews</span> : <span>{spot.numReviews} review</span>} </span>}
       </div>
       <div>
         {!reviewArr.length ? <span>Be the first to post a review!</span> :
