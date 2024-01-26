@@ -13,7 +13,7 @@ const SpotDetails = () => {
   const [isLoading, setIsLoading] = useState(true)
   let spot = useSelector((state) => state.spots.spotDetails)
   let reviews = useSelector((state) => state.reviews.spotReviews)
-  let props = {spot, reviews}
+  let props = { spot, reviews }
 
   const handleReserve = (e) => {
     e.preventDefault()
@@ -23,8 +23,8 @@ const SpotDetails = () => {
   useEffect(() => {
     setIsLoading(true)
     dispatch(getSpotDetails(spotId))
-    .then(() => dispatch(fetchSpotReviews(spotId)))
-    .then(() => setIsLoading(false))
+      .then(() => dispatch(fetchSpotReviews(spotId)))
+      .then(() => setIsLoading(false))
   }, [dispatch, spotId])
 
   return (
@@ -62,7 +62,10 @@ const SpotDetails = () => {
         </div>
       }
       </div>
-      <GetSpotReviews {...props}/>
+      <div>
+        {reviews && <GetSpotReviews {...props} />}
+      </div>
+
     </div>
   )
 }

@@ -8,9 +8,9 @@ import { fetchGetSpots } from '../../store/spots'
 const GetSpotReviews = ({ spot, reviews }) => {
   console.log("SPOT: ", spot)
   console.log("REVIEWS: ", reviews)
-  const reviewArr = Object.values(reviews)
+  const reviewArr = Object.values(reviews) || []
   console.log("REVIEWSARRRRR: ", reviewArr)
-  
+
 
   const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
   return (
