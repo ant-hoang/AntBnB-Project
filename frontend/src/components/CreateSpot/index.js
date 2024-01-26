@@ -29,10 +29,10 @@ const CreateSpot = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // setErrors([])
-    // const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price, previewImage)
-    // setErrors(errorList)
-    // if (errors.length) return
+    setErrors([])
+    const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price, previewImage)
+    setErrors(errorList)
+    if (errors.length) return
 
     const payload = {
       address,
