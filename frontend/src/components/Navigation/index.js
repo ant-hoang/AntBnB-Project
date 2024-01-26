@@ -13,19 +13,16 @@ function Navigation({ isLoaded }) {
   const sessionUser = useSelector(state => state.session.user);
   const history = useHistory()
 
-  const handleHomeClick = () => {
-    history.push("/")
-  }
-
   console.log("sessionUser: ", sessionUser)
   return (
     <ul>
       <li>
-        <NavLink exact to="/" onClick={handleHomeClick}>
-          <img 
-          style={{height: 50, width: 75}}
-          src={FavIcon} 
-          alt='favIcon' />
+        <NavLink exact to="/" >
+          <img
+            style={{ height: 15, width: 25 }}
+            src={FavIcon}
+            alt='favIcon' />
+          <span>Ant-BnB</span>
         </NavLink>
       </li>
       {isLoaded && sessionUser && (

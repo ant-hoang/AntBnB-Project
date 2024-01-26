@@ -7,17 +7,17 @@ import star from '../images/star-vector-icon.jpg'
 
 const GetSpots = () => {
   const [isLoading, setIsLoading] = useState(true)
-  const [errors, setErrors] = useState([])
+  // const [errors, setErrors] = useState([])
   const dispatch = useDispatch();
 
   useEffect(() => {
     setIsLoading(true)
     dispatch(fetchGetSpots())
       .then(() => setIsLoading(false))
-      .catch(async (res) => {
-        const errors = await res.json()
-        setErrors(errors)
-      })
+      // .catch(async (res) => {
+      //   const errors = await res.json()
+      //   setErrors(errors)
+      // })
   }, [dispatch])
 
   const spotState = useSelector((state) => state.spots.allSpots) || {}
@@ -28,9 +28,9 @@ const GetSpots = () => {
       <nav>
         {isLoading ? <h2>...Loading</h2> : spots.map((el) => {
           return (
-            <div className="spot-block">
+            <div className="spot-block" key={el.id}>
               <NavLink to={`/spots/${el.id}`}>
-                <div key={el.id} className='spot'>
+                <div className='spot'>
                   <img src={el.previewImage} alt="houses" className='spotImages'></img>
                   <div className='spot-description'>
                     <div className="location-rating-container">

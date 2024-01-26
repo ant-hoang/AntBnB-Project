@@ -10,6 +10,7 @@ const addImage = (newImage) => {
 }
 
 export const createImage = (payload, spotId) => async (dispatch) => {
+  console.log("CREATE IMAGE THUNK PAYLOAD: ", payload)
   const res = await csrfFetch(`/api/spots/${spotId}/images`, {
     method: 'POST',
     header: { 'Content-Type': 'application/json' },

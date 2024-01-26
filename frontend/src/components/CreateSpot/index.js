@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { createSpot } from '../../store/spots'
 import { createImage } from '../../store/images'
-import { Redirect } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+
 
 const CreateSpot = () => {
   const [address, setAddress] = useState("")
@@ -23,6 +24,7 @@ const CreateSpot = () => {
   const [errors, setErrors] = useState([])
 
   const dispatch = useDispatch()
+  const history = useHistory()
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,7 +33,6 @@ const CreateSpot = () => {
     // const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price, previewImage)
     // setErrors(errorList)
     // if (errors.length) return
-    
 
     const payload = {
       address,
@@ -45,22 +46,20 @@ const CreateSpot = () => {
       price: parseFloat(price)
     }
 
-    console.log("PAYLOAD: ", payload)
-
     const images = settingImages(previewImage, image2, image3, image4, image5)
 
     dispatch(createSpot(payload))
-      .then( async (spot) => {
+      .then((spot) => {
         for (let i = 0; i < images.length; i++) {
           let currObj = images[i]
           if (currObj.url) {
-            await dispatch(createImage(currObj, spot.id))
+            dispatch(createImage(currObj, spot.id))
           }
         }
+        history.push(`/spots/${spot.id}`)
       })
 
-
-    // reset()
+    reset()
   }
 
   const checkErrors = (address, city, state, country, lat, lng, name, description, price, previewImage) => {
