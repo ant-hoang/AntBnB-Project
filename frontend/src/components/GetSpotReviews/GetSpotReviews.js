@@ -13,6 +13,7 @@ const GetSpotReviews = ({ spot, reviews }) => {
 
 
   const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  console.log(monthNames.length)
   return (
     <div>
       <div className='header'>
@@ -31,7 +32,7 @@ const GetSpotReviews = ({ spot, reviews }) => {
             return (
               <div key={reviewArr.id}>
                 <h3>{review.User.firstName}</h3>
-                <h4>{Date(review.updatedAt)}</h4>
+                <h4>{monthNames[parseInt(review.createdAt.slice(5, 7)) - 1]} {/*need to figure out how to just get month */}</h4>
               </div>
             )
           })}
