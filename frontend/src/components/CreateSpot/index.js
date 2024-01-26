@@ -3,17 +3,18 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { createSpot } from '../../store/spots'
 import { createImage } from '../../store/images'
+import { Redirect } from 'react-router-dom'
 
 const CreateSpot = () => {
   const [address, setAddress] = useState("")
   const [city, setCity] = useState("")
   const [state, setState] = useState("")
   const [country, setCountry] = useState("")
-  const [lat, setLat] = useState(null)
-  const [lng, setLng] = useState(null)
+  const [lat, setLat] = useState("")
+  const [lng, setLng] = useState("")
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const [price, setPrice] = useState(null)
+  const [price, setPrice] = useState("")
   const [previewImage, setPreviewImage] = useState("")
   const [image2, setImage2] = useState("")
   const [image3, setImage3] = useState("")
@@ -30,32 +31,36 @@ const CreateSpot = () => {
     // const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price, previewImage)
     // setErrors(errorList)
     // if (errors.length) return
+    
 
     const payload = {
       address,
       city,
       state,
       country,
-      lat,
-      lng,
+      lat: parseFloat(lat),
+      lng: parseFloat(lng),
       name,
       description,
-      price
+      price: parseFloat(price)
     }
+
+    console.log("PAYLOAD: ", payload)
 
     const images = settingImages(previewImage, image2, image3, image4, image5)
 
     dispatch(createSpot(payload))
-      .then((spot) => {
-        for(let i = 0; i < images.length; i++) {
+      .then( async (spot) => {
+        for (let i = 0; i < images.length; i++) {
           let currObj = images[i]
-          if(currObj.url) {
-            dispatch(createImage(currObj, spot.ownerId))
+          if (currObj.url) {
+            await dispatch(createImage(currObj, spot.id))
           }
         }
       })
 
-    reset()
+
+    // reset()
   }
 
   const checkErrors = (address, city, state, country, lat, lng, name, description, price, previewImage) => {
@@ -89,11 +94,11 @@ const CreateSpot = () => {
     setCity("")
     setState("")
     setCountry("")
-    setLat(null)
-    setLng(null)
+    setLat("")
+    setLng("")
     setName("")
     setDescription("")
-    setPrice(null)
+    setPrice("")
     setPreviewImage("")
     setImage2("")
     setImage3("")
@@ -157,7 +162,7 @@ const CreateSpot = () => {
             id="lat"
             type="text"
             placeholder='Latitude'
-            onChange={(e) => setLat(+e.target.value)}
+            onChange={(e) => setLat(e.target.value)}
             value={lat}
           />
         </div>
@@ -167,7 +172,7 @@ const CreateSpot = () => {
             id="lng"
             type="text"
             placeholder='Longitude'
-            onChange={(e) => setLng(+e.target.value)}
+            onChange={(e) => setLng(e.target.value)}
             value={lng}
           />
         </div>
@@ -206,7 +211,7 @@ const CreateSpot = () => {
             id="price"
             type="text"
             placeholder='Price per night (USD)'
-            onChange={(e) => setPrice(+e.target.value)}
+            onChange={(e) => setPrice(e.target.value)}
             value={price}
           />
         </div>
