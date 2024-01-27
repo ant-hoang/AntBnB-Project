@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch } from 'react-redux';
 import * as sessionActions from '../../store/session';
 import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
+
 import './ProfileButton.css';
 
 function ProfileButton({ user }) {
@@ -48,15 +49,8 @@ function ProfileButton({ user }) {
   return (
     <>
       <button onClick={toggleMenu}>
-        <i className="fas fa-user-circle" /> 
-        <svg className="svg-icon"
-        role="img"
-        height="10"
-        width="10"
-        viewBox="0 0 10 10"
-        aria-hidden="true"
-        focusable="false">
-        </svg>
+        <i className="fa-solid fa-bars" /> 
+        
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user ? (

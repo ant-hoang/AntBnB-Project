@@ -2,20 +2,26 @@ import './GetSpotReviews.css'
 import star from '../images/star-vector-icon.jpg'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { NavLink } from "react-router-dom"
-import { fetchGetSpots } from '../../store/spots'
+import OpenModalMenuItem from '../Navigation/OpenModalMenuItem'
+import ReviewFormModal from '../ReviewFormModal/ReviewFormModal'
+import { fetchSpotReviews } from '../../store/reviews'
 
-const GetSpotReviews = ({ session, spot, reviews }) => {
-  console.log("SESSION: ", session)
-  console.log("SPOT: ", spot)
-  console.log("REVIEWS: ", reviews)
+const GetSpotReviews = ({ session }) => {
+  const dispatch = useDispatch()
+  const reviews = useSelector((state) => state.reviews.spotReviews)
+  const spot = useSelector((state) => state.spots.spotDetails)
   const reviewArr = Object.values(reviews).reverse() || []
-  console.log("REVIEWSARRRR: ", reviewArr)
-  const checkUser = reviewArr.find((obj) => obj.userId == session.user.id)
+  // checks if user has submitted a review
+  const checkUser = session.user ? reviewArr.find((obj) => obj.userId == session.user.id) : false
 
-  console.log(checkUser)
+  // checks if user owns the spot
+  const checkOwner = (session.user && session.user.id == spot.ownerId) ? true : false
 
   const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+  useEffect(() => {
+    dispatch(fetchSpotReviews(spot.id))
+  }, [dispatch])
 
   return (
     <div>
@@ -29,9 +35,22 @@ const GetSpotReviews = ({ session, spot, reviews }) => {
         {!spot.avgRating ? <span>New</span> :
           <span> {spot.avgRating} &#x2022; {spot.numReviews > 1 ? <span>{spot.numReviews} reviews</span> : <span>{spot.numReviews} review</span>} </span>}
       </div>
+
+
+
+
       <div>
-          {session.user && !checkUser && <button>Post Your Review</button>}
+        {session.user && !checkUser && !checkOwner && <OpenModalMenuItem
+          itemText={<button>Post Your Review</button>}
+          // onItemClick={closeMenu}
+          modalComponent={<ReviewFormModal />}
+        />}
+        
       </div>
+      {/* {session.user && !checkUser && !checkOwner &&} */}
+
+
+
       <div>
         {!reviewArr.length ? <span>Be the first to post a review!</span> :
           reviewArr.map((review) => {
