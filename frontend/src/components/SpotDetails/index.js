@@ -11,9 +11,23 @@ const SpotDetails = () => {
   const dispatch = useDispatch()
   const { spotId } = useParams()
   const [isLoading, setIsLoading] = useState(true)
+  let session = useSelector((state) => state.session)
   let spot = useSelector((state) => state.spots.spotDetails)
   let reviews = useSelector((state) => state.reviews.spotReviews)
-  let props = {spot, reviews}
+  let props = { session, spot, reviews }
+
+
+
+  const reviewArr = Object.values(reviews).reverse() || []
+  // checks if user has submitted a review
+  const checkUser = session.user ? reviewArr.find((obj) => obj.userId == session.user.id) : false
+
+  // checks if user owns the spot
+  const checkOwner = (session.user && session.user.id == spot.ownerId) ? true : false
+
+  const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+
 
   const handleReserve = (e) => {
     e.preventDefault()
@@ -23,8 +37,8 @@ const SpotDetails = () => {
   useEffect(() => {
     setIsLoading(true)
     dispatch(getSpotDetails(spotId))
-    .then(() => dispatch(fetchSpotReviews(spotId)))
-    .then(() => setIsLoading(false))
+      .then(() => dispatch(fetchSpotReviews(spotId)))
+      .then(() => setIsLoading(false))
   }, [dispatch, spotId])
 
   return (
@@ -49,7 +63,7 @@ const SpotDetails = () => {
                   src={star}
                   alt='star'
                 />
-                <span>{spot.avgRating ? spot.avgRating.toFixed(1) : "New"}</span>
+                <span>{spot.avgRating ? parseFloat(spot.avgRating).toFixed(1) : "New"}</span>
                 {!spot.numReviews ? null : spot.numReviews > 1 ? <span>{spot.numReviews} reviews</span> : <span>{spot.numReviews} review</span>}
               </div>
               <div className='reserve-button'>
@@ -62,7 +76,9 @@ const SpotDetails = () => {
         </div>
       }
       </div>
-      <GetSpotReviews {...props}/>
+      <div>
+        {reviews && <GetSpotReviews {...props} />}
+      </div>
     </div>
   )
 }
