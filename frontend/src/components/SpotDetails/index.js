@@ -16,6 +16,19 @@ const SpotDetails = () => {
   let reviews = useSelector((state) => state.reviews.spotReviews)
   let props = { session, spot, reviews }
 
+
+
+  const reviewArr = Object.values(reviews).reverse() || []
+  // checks if user has submitted a review
+  const checkUser = session.user ? reviewArr.find((obj) => obj.userId == session.user.id) : false
+
+  // checks if user owns the spot
+  const checkOwner = (session.user && session.user.id == spot.ownerId) ? true : false
+
+  const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+
+
   const handleReserve = (e) => {
     e.preventDefault()
     alert("Feature coming soon")
@@ -66,7 +79,6 @@ const SpotDetails = () => {
       <div>
         {reviews && <GetSpotReviews {...props} />}
       </div>
-
     </div>
   )
 }
