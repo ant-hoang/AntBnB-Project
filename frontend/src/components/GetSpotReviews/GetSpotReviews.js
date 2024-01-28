@@ -12,16 +12,31 @@ const GetSpotReviews = ({ session }) => {
   const spot = useSelector((state) => state.spots.spotDetails)
   const reviewArr = Object.values(reviews).reverse() || []
   // checks if user has submitted a review
-  const checkUser = session.user ? reviewArr.find((obj) => obj.userId == session.user.id) : false
+  const [checkUser, setCheckUser] = useState(false)
+  // const checkUser = session.user ? reviewArr.find((obj) => obj.userId == session.user.id) : false
 
   // checks if user owns the spot
-  const checkOwner = (session.user && session.user.id == spot.ownerId) ? true : false
+  const [checkOwner, setCheckOwner] = useState(false)
+  // const checkOwner = (session.user && session.user.id == spot.ownerId) ? true : false
 
   const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
   useEffect(() => {
-    dispatch(fetchSpotReviews(spot.id))
-  }, [dispatch])
+    if (session.user) {
+      setCheckUser(reviewArr.find((obj) => obj.userId == session.user.id))
+    } else {
+      setCheckUser(false)
+    }
+
+    if (session.user && session.user.id == spot.ownerId) {
+      setCheckOwner(true)
+    } else {
+      setCheckOwner(false)
+    }
+
+
+      dispatch(fetchSpotReviews(spot.id))
+  }, [dispatch, checkUser, checkOwner])
 
   return (
     <div>
@@ -45,7 +60,7 @@ const GetSpotReviews = ({ session }) => {
           // onItemClick={closeMenu}
           modalComponent={<ReviewFormModal />}
         />}
-        
+
       </div>
       {/* {session.user && !checkUser && !checkOwner &&} */}
 

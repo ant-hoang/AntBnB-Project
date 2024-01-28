@@ -1,0 +1,10 @@
+.hidden {
+  display: none;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 1px;
+  background-color: black;
+  margin: 6px 0;
+}

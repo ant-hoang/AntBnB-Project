@@ -18,14 +18,14 @@ const SpotDetails = () => {
 
 
 
-  const reviewArr = Object.values(reviews).reverse() || []
-  // checks if user has submitted a review
-  const checkUser = session.user ? reviewArr.find((obj) => obj.userId == session.user.id) : false
+  // const reviewArr = Object.values(reviews).reverse() || []
+  // // checks if user has submitted a review
+  // const checkUser = session.user ? reviewArr.find((obj) => obj.userId == session.user.id) : false
 
-  // checks if user owns the spot
-  const checkOwner = (session.user && session.user.id == spot.ownerId) ? true : false
+  // // checks if user owns the spot
+  // const checkOwner = (session.user && session.user.id == spot.ownerId) ? true : false
 
-  const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  // const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 
 

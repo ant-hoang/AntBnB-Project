@@ -1,3 +1,32 @@
 li {
   list-style-type: none;
 }
+
+div {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+button {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.navigation-w-user {
+  display: grid;
+  grid-template-columns: 9.75fr 1.25fr 1fr;
+  justify-content: space-between;
+  border-bottom: solid 2px black;
+  padding-bottom: 8px;
+}
+
+.navigation-wo-user {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: space-between;
+  border-bottom: solid 2px black;
+  padding-bottom: 8px;
+
+}

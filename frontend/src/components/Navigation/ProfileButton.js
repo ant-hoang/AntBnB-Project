@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { NavLink } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import * as sessionActions from '../../store/session';
 import OpenModalMenuItem from './OpenModalMenuItem';
@@ -11,11 +12,6 @@ function ProfileButton({ user }) {
   const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
   const ulRef = useRef();
-
-  const openMenu = () => {
-    if (showMenu) return;
-    setShowMenu(true);
-  };
 
   const toggleMenu = (e) => {
     e.stopPropagation();
@@ -49,8 +45,9 @@ function ProfileButton({ user }) {
   return (
     <>
       <button onClick={toggleMenu}>
-        <i className="fa-solid fa-bars" /> 
-        
+        <div>
+          <i className="fa-solid fa-bars" />
+        </div>
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user ? (
@@ -58,6 +55,11 @@ function ProfileButton({ user }) {
             <li>{user.username}</li>
             <li>{user.firstName} {user.lastName}</li>
             <li>{user.email}</li>
+            <li>
+              <NavLink to='/spots/manage'>
+                <button>Manage Spots</button>
+              </NavLink>
+            </li>
             <li>
               <button onClick={logout}>Log Out</button>
             </li>
