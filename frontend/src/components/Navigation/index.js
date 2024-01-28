@@ -13,9 +13,7 @@ function Navigation({ isLoaded }) {
   const sessionUser = useSelector(state => state.session.user);
   const navigationClass = "navigation-" + (sessionUser ? "w-user" : "wo-user")
   const createSpotClassName = "create-spot" + (sessionUser ? "" : " hidden")
-  const history = useHistory()
 
-  console.log("sessionUser: ", sessionUser)
   return (
     <>
       <div className={navigationClass}>
@@ -25,7 +23,7 @@ function Navigation({ isLoaded }) {
             <span>Ant-BnB</span>
           </NavLink>
         </div>
-      
+
         {isLoaded && (
           <div className={createSpotClassName}>
             {<NavLink to="/spots/new">

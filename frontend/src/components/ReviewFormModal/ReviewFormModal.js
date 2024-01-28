@@ -56,7 +56,6 @@ function ReviewFormModal() {
       )}
 
       <form onSubmit={handleSubmit}>
-        <div>
           <textarea
             placeholder="Leave your review here..."
             value={review}
@@ -65,9 +64,7 @@ function ReviewFormModal() {
             onChange={(e) => setReview(e.target.value)}
             required
           ></textarea>
-        </div>
 
-        <div>
           <label>
             {[...Array(totalStars)].map((star, index) => {
               const currentRating = index + 1;
@@ -95,9 +92,6 @@ function ReviewFormModal() {
               );
             })} Stars
           </label>
-        </div>
-
-
         <button type="submit">Submit Your Review</button>
       </form>
     </div>

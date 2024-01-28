@@ -1,3 +1,18 @@
 .rating {
   display: none;
 }
+
+form {
+  display: grid;
+  grid-template-rows: auto;
+  justify-content: center;
+}
+
+label {
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  margin-left: 150px;
+}
