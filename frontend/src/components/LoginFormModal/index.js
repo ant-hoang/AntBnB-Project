@@ -19,41 +19,43 @@ function LoginFormModal() {
       .then(closeModal)
       .catch(async (res) => {
         const data = await res.json();
-        if (data && data.errors) {
-          setErrors(data.message);
-          console.log(errors)
+        if (data) {
+          setErrors({ ...data });
         }
       });
-
   };
+
+  console.log("ERRORS:", errors)
 
   return (
     <>
-      <h1>Log In</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username or Email
-          <input
-            type="text"
-            value={credential}
-            onChange={(e) => setCredential(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        {errors.credential && (
-          <p>{errors.credential}</p>
-        )}
-        <button type="submit">Log In</button>
-      </form>
+      <div className="container">
+        <h1>Log In</h1>
+        <form onSubmit={handleSubmit}>
+          <label>
+            <input
+              type="text"
+              value={credential}
+              placeholder="Username or Email"
+              onChange={(e) => setCredential(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            <input
+              type="password"
+              value={password}
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+          {errors.message && (
+            <p>{errors.message}</p>
+          )}
+          <button type="submit">Log In</button>
+        </form>
+      </div>
     </>
   );
 }

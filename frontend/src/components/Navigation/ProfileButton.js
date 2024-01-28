@@ -44,10 +44,8 @@ function ProfileButton({ user }) {
 
   return (
     <>
-      <button onClick={toggleMenu}>
-        <div>
-          <i className="fa-solid fa-bars" />
-        </div>
+      <button className="menu-icon" onClick={toggleMenu}>
+        <i className="fa-solid fa-bars" />
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user ? (
@@ -67,12 +65,12 @@ function ProfileButton({ user }) {
         ) : (
           <>
             <OpenModalMenuItem
-              itemText="Log In"
+              itemText={<button className="logs">Log In</button>}
               onItemClick={closeMenu}
               modalComponent={<LoginFormModal />}
             />
             <OpenModalMenuItem
-              itemText="Sign Up"
+              itemText={<button className="logs">Sign Up</button>}
               onItemClick={closeMenu}
               modalComponent={<SignupFormModal />}
             />
