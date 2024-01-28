@@ -38,6 +38,7 @@ const SpotDetails = () => {
     setIsLoading(true)
     dispatch(getSpotDetails(spotId))
       .then(() => dispatch(fetchSpotReviews(spotId)))
+      .then(() => <GetSpotReviews />)
       .then(() => setIsLoading(false))
   }, [dispatch, spotId])
 
@@ -76,6 +77,10 @@ const SpotDetails = () => {
         </div>
       }
       </div>
+
+
+
+      
       <div>
         {reviews && <GetSpotReviews {...props} />}
       </div>

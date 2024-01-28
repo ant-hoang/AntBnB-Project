@@ -25,15 +25,14 @@ function LoginFormModal() {
       });
   };
 
-  console.log("ERRORS:", errors)
-
   return (
     <>
       <div className="container">
-        <h1>Log In</h1>
-        <form onSubmit={handleSubmit}>
-          <label>
+        <h1 className="login-h1">Log In</h1>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <label className="login-label">
             <input
+              className="login-input"
               type="text"
               value={credential}
               placeholder="Username or Email"
@@ -41,8 +40,9 @@ function LoginFormModal() {
               required
             />
           </label>
-          <label>
+          <label className="login-label">
             <input
+              className="login-input"
               type="password"
               value={password}
               placeholder="Password"
@@ -53,7 +53,7 @@ function LoginFormModal() {
           {errors.message && (
             <p>{errors.message}</p>
           )}
-          <button type="submit">Log In</button>
+          <button className="login-submit" type="submit">Log In</button>
         </form>
       </div>
     </>

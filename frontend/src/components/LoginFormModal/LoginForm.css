@@ -1,22 +1,29 @@
-form {
+.login-form {
   display: grid;
   grid-template-rows: auto;
   height: 100px;
   width: 500px;
 }
 
-label {
+.login-label {
   display: flex;
   justify-content: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-h1 {
+.login-h1 {
+  display: flex;
+  justify-content: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 
-input {
+.login-input {
   width: 400px;
+  margin: 3px 45px 3px 45px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.login-submit {
+  margin: 10px 45px 10px 45px;
 }

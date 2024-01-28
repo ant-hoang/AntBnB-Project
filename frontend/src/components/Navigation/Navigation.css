@@ -1,12 +1,8 @@
-li {
-  list-style-type: none;
-}
-
 div {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-button {
+.create-spot-button {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   width: 150px;
 }

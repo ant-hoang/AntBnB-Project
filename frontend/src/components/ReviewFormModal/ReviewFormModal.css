@@ -1,18 +1,24 @@
+.review-h1 {
+  display: flex;
+  justify-content: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif
+}
+
 .rating {
   display: none;
 }
 
-form {
+.review-form {
   display: grid;
   grid-template-rows: auto;
   justify-content: center;
 }
 
-label {
+.review-label {
   display: flex;
   justify-content: center;
 }
 
-button {
+.review-button {
   margin-left: 150px;
 }

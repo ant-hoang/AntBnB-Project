@@ -27,7 +27,7 @@ function Navigation({ isLoaded }) {
         {isLoaded && (
           <div className={createSpotClassName}>
             {<NavLink to="/spots/new">
-              <button>Create a New Spot</button>
+              <button className='create-spot-button'>Create a New Spot</button>
             </NavLink>}
           </div>
         )}

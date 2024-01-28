@@ -40,27 +40,24 @@ function ProfileButton({ user }) {
     closeMenu();
   };
 
-  const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
+  const profileClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
   return (
     <>
       <button className="menu-icon" onClick={toggleMenu}>
         <i className="fa-solid fa-bars" />
       </button>
-      <ul className={ulClassName} ref={ulRef}>
+      <div className={profileClassName} ref={ulRef}>
         {user ? (
           <>
-            <li>{user.username}</li>
-            <li>{user.firstName} {user.lastName}</li>
-            <li>{user.email}</li>
-            <li>
+            <h5>Hello, {user.username}</h5>
+            <h5>{user.email}</h5>
+            <button>
               <NavLink to='/spots/manage'>
-                <button>Manage Spots</button>
+                Manage Spots
               </NavLink>
-            </li>
-            <li>
+            </button>
               <button onClick={logout}>Log Out</button>
-            </li>
           </>
         ) : (
           <>
@@ -76,7 +73,7 @@ function ProfileButton({ user }) {
             />
           </>
         )}
-      </ul>
+      </div>
     </>
   );
 }

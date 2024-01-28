@@ -1,33 +1,31 @@
-form {
+.signup-form {
   display: grid;
   grid-template-rows: auto;
   height: 400px;
   width: 500px;
 }
 
-h1 {
+.signup-h1 {
   display: flex;
   justify-content: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-label {
+.signup-label {
   display: flex;
   justify-content: center;
   height: 30px;
 }
 
-input {
+.signup-input {
   width: 400px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-button {
+.signup-button {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 45px;
-  margin-right: 45px;
-  height: 50px;
+  margin: 40px 40px 40px 40px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }

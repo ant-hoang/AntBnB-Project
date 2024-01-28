@@ -28,7 +28,6 @@ function ReviewFormModal() {
 
     dispatch(fetchCreateReview(spot.id, payload))
       .then(closeModal)
-      .then(() => history.push(`/spots/${spot.id}`))
       .catch(async (res) => {
         const data = await res.json();
         if (data && data.errors) {
@@ -47,7 +46,7 @@ function ReviewFormModal() {
 
   return (
     <div>
-      <h1>How was your stay?</h1>
+      <h1 className="review-h1">How was your stay?</h1>
       {(errors.review || errors.stars) && (
         <div>
           <p>{errors.review}</p>
@@ -55,7 +54,7 @@ function ReviewFormModal() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form className="review-form" onSubmit={handleSubmit}>
           <textarea
             placeholder="Leave your review here..."
             value={review}
@@ -65,7 +64,7 @@ function ReviewFormModal() {
             required
           ></textarea>
 
-          <label>
+          <label className="review-label">
             {[...Array(totalStars)].map((star, index) => {
               const currentRating = index + 1;
 
@@ -92,7 +91,7 @@ function ReviewFormModal() {
               );
             })} Stars
           </label>
-        <button type="submit">Submit Your Review</button>
+        <button className="review-button" type="submit">Submit Your Review</button>
       </form>
     </div>
   )
