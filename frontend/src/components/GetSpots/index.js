@@ -14,10 +14,6 @@ const GetSpots = () => {
     setIsLoading(true)
     dispatch(fetchGetSpots())
       .then(() => setIsLoading(false))
-      // .catch(async (res) => {
-      //   const errors = await res.json()
-      //   setErrors(errors)
-      // })
   }, [dispatch])
 
   const spotState = useSelector((state) => state.spots.allSpots) || {}
