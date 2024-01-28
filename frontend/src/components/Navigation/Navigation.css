@@ -8,6 +8,7 @@ div {
 
 button {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  width: 150px;
 }
 
 .hidden {
