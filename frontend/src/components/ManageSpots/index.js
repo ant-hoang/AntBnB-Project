@@ -11,8 +11,6 @@ function ManageSpots() {
   const fetchMySpots = useSelector((state) => state.spots.mySpots) || {}
   const spots = Object.values(fetchMySpots)
 
-  console.log("MANAGE SPOTS: ", spots)
-
   useEffect(() => {
     dispatch(fetchGetMySpots())
   }, [dispatch])
