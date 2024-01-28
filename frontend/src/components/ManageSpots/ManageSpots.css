@@ -1,0 +1,12 @@
+.manage-spot-block {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+}
+
+
+.manage-buttons {
+  height: 20px;
+  width: 60px;
+  margin: 0px 4px 0px 12px;
+}
+

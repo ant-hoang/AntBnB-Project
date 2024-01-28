@@ -1,0 +1,31 @@
+.signup-form {
+  display: grid;
+  grid-template-rows: auto;
+  height: 400px;
+  width: 500px;
+}
+
+.signup-h1 {
+  display: flex;
+  justify-content: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.signup-label {
+  display: flex;
+  justify-content: center;
+  height: 30px;
+}
+
+.signup-input {
+  width: 400px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.signup-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 40px 40px 40px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}

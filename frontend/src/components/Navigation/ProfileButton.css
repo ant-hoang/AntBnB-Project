@@ -1,0 +1,17 @@
+.hidden {
+  display: none;
+}
+
+.menu-icon {
+  width: 35px;
+  height: 30px;
+}
+
+.logs {
+  width: 80px;
+  height: 25px;
+}
+
+.profile-dropdown {
+  list-style-type: none;
+}
