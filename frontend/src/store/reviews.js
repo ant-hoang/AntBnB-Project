@@ -21,10 +21,10 @@ export const fetchSpotReviews = (spotId) => async (dispatch) => {
   const res = await csrfFetch(`/api/spots/${spotId}/reviews`)
   if (res.ok) {
     const data = await res.json()
-    const reviewData = {spotReviews: {}}
+    const reviewData = {}
     for (let i = 0; i < data.Reviews.length; i++) {
       let currentObj = data.Reviews[i]
-      reviewData.spotReviews[currentObj.id] = currentObj
+      reviewData[currentObj.id] = currentObj
     }
 
     dispatch(getReviews(reviewData))

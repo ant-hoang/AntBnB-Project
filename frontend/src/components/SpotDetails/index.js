@@ -13,10 +13,10 @@ const SpotDetails = () => {
   const dispatch = useDispatch()
   const { spotId } = useParams()
   const [isLoading, setIsLoading] = useState(true)
-  const sessionUser = useSelector((state) => state.session.user) || {}
+  const sessionUser = useSelector((state) => state.session.user)
   const spot = useSelector((state) => state.spots.spotDetails) || {}
-  const reviews = useSelector((state) => state.reviews.spotReviews) || {}
-  const reviewArr = Object.values(reviews).reverse() || []
+  const reviews = useSelector((state) => state.reviews)
+  const reviewArr = Object.values(reviews).reverse()
 
   const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
   const [checkUser, setCheckUser] = useState(0)
@@ -26,37 +26,37 @@ const SpotDetails = () => {
     e.preventDefault()
     alert("Feature coming soon")
   }
-  
+
   const checkList = () => {
     setCheckUser(0)
     setCheckOwner(false)
-    if (sessionUser && Object.keys(spot).length) {
+    if (sessionUser && spot.id) {
       setCheckOwner((sessionUser.id === spot.ownerId))
-    }
+    } 
     if (sessionUser && reviewArr.length) {
-      setCheckUser(reviewArr.findIndex((obj) => obj.userId == sessionUser.id) + 1)
+      setCheckUser(reviewArr.findIndex((obj) => obj.userId === sessionUser.id) + 1)
     }
+
+    return
   }
-  
+
   useEffect(() => {
-    
+
     checkList()
+    console.log(checkUser)
+    console.log(checkOwner)
     setIsLoading(true)
-    
+
     dispatch(getSpotDetails(spotId))
-    .then(() => dispatch(fetchSpotReviews(spotId)))
-    .then(() => setIsLoading(false))
-    
+      .then(() => dispatch(fetchSpotReviews(spotId)))
+      .then(() => setIsLoading(false))
+
     return
   }, [dispatch, checkOwner, checkUser])
-  
-  let props = { checkUser, setCheckUser }
-  
+
   return (
     <div>
       {/* Spot Details */}
-
-
       <div>{isLoading ? <h2>...Loading</h2> :
         <div>
           <div className="heading">
@@ -109,16 +109,16 @@ const SpotDetails = () => {
 
 
 
-          {sessionUser && !checkUser && !checkOwner && <div className="review-modal-button">
-            <button>
-            {<OpenModalMenuItem
-              itemText={"Post Your Review"}
-              // onItemClick={closeMenu}
-              modalComponent={<ReviewFormModal {...props} />}
+          <div className="review-modal-button">
+            {sessionUser && !checkUser && !checkOwner && <button>
+              {<OpenModalMenuItem
+                itemText={"Post Your Review"}
+                // onItemClick={closeMenu}
+                modalComponent={<ReviewFormModal />}
               />}
-              </button>
-
-          </div>}
+            </button>
+            }
+          </div>
 
 
 
@@ -131,6 +131,7 @@ const SpotDetails = () => {
                     <h3>{review.User.firstName}</h3>
                     <h4>{monthNames[parseInt(review.createdAt.slice(5, 7)) - 1]} <span>{review.createdAt.slice(0, 4)}</span></h4>
                     <h5>{review.review}</h5>
+                    {checkUser ? <button>Delete</button> : ''}
                   </div>
                 )
               })}

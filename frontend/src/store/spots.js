@@ -4,6 +4,7 @@ const GET_SPOTS = "/spots/getSpots"
 const ADD_SPOTS = "/spots/addSpot"
 const SPOT_DETAILS = "/spots/spotDetail"
 const GET_MY_SPOTS = "/spots/getMySpots"
+const DELETE_SPOT = "/spots/deleteSpot"
 
 const getSpot = (currentSpots) => { // action creator
   return {
@@ -30,6 +31,13 @@ const getMySpot = (mySpots) => {
   return {
     type: GET_MY_SPOTS,
     mySpots
+  }
+}
+
+const deleteSpot = (spot) => {
+  return {
+    type: DELETE_SPOT,
+    spot
   }
 }
 
@@ -96,6 +104,19 @@ export const createSpot = (payload) => async (dispatch) => {
   }
 
   return res
+}
+
+export const fetchDeleteSpot = (spotId) => async (dispatch) => {
+  const res = await csrfFetch(`/api/spots/${spotId}`, {
+    method: 'DELETE'
+  })
+
+  if (res.ok) {
+    dispatch(deleteSpot())
+  }
+
+  return res
+
 }
 
 

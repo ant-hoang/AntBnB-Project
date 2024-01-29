@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import './ManageSpots.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchGetMySpots } from '../../store/spots'
-import { NavLink } from 'react-router-dom'
 import star from '../images/star-vector-icon.jpg'
+import OpenModalMenuItem from '../Navigation/OpenModalMenuItem';
+import DeleteSpotModal from '../DeleteSpotModal'
 
 function ManageSpots() {
   const dispatch = useDispatch()
@@ -11,6 +13,13 @@ function ManageSpots() {
 
   const fetchMySpots = useSelector((state) => state.spots.allSpots) || {}
   const spots = Object.values(fetchMySpots)
+
+  const handleUpdate = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log("what does e have", e)
+
+  }
 
   useEffect(() => {
     setIsLoading(true)
@@ -53,8 +62,17 @@ function ManageSpots() {
                       </div>
                     </NavLink>
                     <div className="manage-buttons-container">
-                      <button className="manage-buttons update">Update</button>
-                      <button className="manage-buttons delete">Delete</button>
+                      <button onClick={handleUpdate} className="manage-buttons update">
+                      {<NavLink to={`/spots/${el.id}/edit`}>
+                          Update
+                        </NavLink>}
+                      </button>
+                      <button className="manage-buttons delete">
+                        <OpenModalMenuItem
+                          itemText="Delete"
+                          modalComponent={<DeleteSpotModal {...el} />}
+                        />
+                      </button>
                     </div>
                   </div>
                 )
