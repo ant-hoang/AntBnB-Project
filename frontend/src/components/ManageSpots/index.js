@@ -14,6 +14,7 @@ function ManageSpots() {
   useEffect(() => {
     dispatch(fetchGetMySpots())
   }, [dispatch])
+  
   return (
     <div>
       <h1>Manage Spots</h1>

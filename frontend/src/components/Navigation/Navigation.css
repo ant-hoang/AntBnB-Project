@@ -1,5 +1,9 @@
 div {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+button {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
 }
 
 .home-link {
@@ -8,7 +12,6 @@ div {
 }
 
 .create-spot-button {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
   width: 150px;
 }
 

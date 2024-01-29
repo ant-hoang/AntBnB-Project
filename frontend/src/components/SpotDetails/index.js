@@ -26,46 +26,44 @@ const SpotDetails = () => {
   const [checkOwner, setOwnerUser] = useState(false)
   // const checkOwner = (session.user && session.user.id === spot.ownerId) ? true : false
   // console.log("CHECKOWNER: ", checkOwner)
-  
-  
-  
-  
-  
+
+
+
+
+
   const handleReserve = (e) => {
     e.preventDefault()
     alert("Feature coming soon")
   }
-  
+
   useEffect(() => {
     setIsLoading(true)
-    
-    if (session.user && reviewArr.length) {
-      setCheckUser(reviewArr.findIndex((obj) => obj.userId == session.user.id) + 1)
-    }
     if (session.user) {
       setOwnerUser((session.user.id == spot.ownerId))
+    }
+    if (session.user && reviewArr.length) {
+      setCheckUser(reviewArr.findIndex((obj) => obj.userId == session.user.id) + 1)
     }
 
 
     dispatch(getSpotDetails(spotId))
-    .then(() => dispatch(fetchSpotReviews(spotId)))
-    .then(() => setIsLoading(false))
+      .then(() => dispatch(fetchSpotReviews(spotId)))
+      .then(() => setIsLoading(false))
 
     return
   }, [dispatch, spotId])
-  
-  const sessionState = useSelector((state) => state.session)
-  const session = sessionState
-  const spotState = useSelector((state) => state.spots.spotDetails)
-  const spot = spotState
-  const reviewState = useSelector((state) => state.reviews.spotReviews) || {}
-  const reviews = reviewState
+
+  const session = useSelector((state) => state.session)
+  const spot = useSelector((state) => state.spots.spotDetails)
+  const reviews = useSelector((state) => state.reviews.spotReviews) || {}
   const reviewArr = Object.values(reviews).reverse() || []
   let props = { checkUser, setCheckUser }
-  
+
   return (
     <div>
       {/* Spot Details */}
+
+
       <div>{isLoading ? <h2>...Loading</h2> :
         <div className="heading">
           <h1>{spot.name}</h1>
@@ -97,13 +95,13 @@ const SpotDetails = () => {
             </div>
           </div>
         </div>
+
       }
       </div>
 
 
-
       {/* Reviews Summary */}
-      <div>
+      {isLoading ? <h2></h2> : <div>
         {/* {reviews && <GetSpotReviews {...props} />}*/}
 
 
@@ -119,25 +117,25 @@ const SpotDetails = () => {
           <span>{spot.avgRating && spot.avgRating ? parseFloat(spot.avgRating).toFixed(1) : "New"}</span>
           {!spot.numReviews ? null : spot.numReviews > 1 ? <span> &#x2022; {spot.numReviews} reviews</span> : <span> &#x2022; {spot.numReviews} review</span>}
         </div>
-      </div>
+      </div>}
 
 
 
 
-      <div className="review-modal-button">
+      {isLoading ? <h2></h2> : <div className="review-modal-button">
         {session.user && !checkUser && !checkOwner && <OpenModalMenuItem
           itemText={<button>Post Your Review</button>}
           // onItemClick={closeMenu}
-          modalComponent={<ReviewFormModal {...props}/>}
+          modalComponent={<ReviewFormModal {...props} />}
         />}
 
-      </div>
+      </div>}
 
 
 
 
 
-      <div>
+      {isLoading ? <h2></h2> : <div>
         {!reviewArr.length ? <span>Be the first to post a review!</span> :
           reviewArr.map((review) => {
             return (
@@ -148,7 +146,7 @@ const SpotDetails = () => {
               </div>
             )
           })}
-      </div>
+      </div>}
 
 
 
