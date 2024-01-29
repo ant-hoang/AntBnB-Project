@@ -21,18 +21,17 @@ function ReviewFormModal({checkUser, setCheckUser}) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    e.stopPropagation()
     setErrors({})
+    
     const payload = {
       review,
       stars: rating
     }
 
     dispatch(fetchCreateReview(spot.id, payload))
-    .then(() => setCheckUser(1))
-    .then(() => dispatch(fetchSpotReviews(spot.id)))
-    .then(() => dispatch(getSpotDetails(spot.id)))
       .then(closeModal)
+      .then(() => dispatch(getSpotDetails(spot.id)))
+      .then(() => dispatch(fetchSpotReviews(spot.id)))
       .catch(async (res) => {
         const data = await res.json();
         if (data && data.errors) {
