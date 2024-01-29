@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { useModal } from "../../context/Modal";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { fetchCreateReview } from "../../store/reviews";
+import { fetchCreateReview, fetchSpotReviews } from "../../store/reviews";
+import { getSpotDetails } from "../../store/spots";
 import { useHistory } from "react-router-dom";
 import "./ReviewFormModal.css";
 
-function ReviewFormModal() {
+function ReviewFormModal({checkUser, setCheckUser}) {
   const dispatch = useDispatch();
   const history = useHistory()
   const [review, setReview] = useState("")
@@ -20,6 +21,7 @@ function ReviewFormModal() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    e.stopPropagation()
     setErrors({})
     const payload = {
       review,
@@ -27,6 +29,9 @@ function ReviewFormModal() {
     }
 
     dispatch(fetchCreateReview(spot.id, payload))
+    .then(() => setCheckUser(1))
+    .then(() => dispatch(fetchSpotReviews(spot.id)))
+    .then(() => dispatch(getSpotDetails(spot.id)))
       .then(closeModal)
       .catch(async (res) => {
         const data = await res.json();

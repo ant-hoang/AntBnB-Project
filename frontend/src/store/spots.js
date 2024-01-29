@@ -38,10 +38,10 @@ export const fetchGetSpots = () => async (dispatch) => { // thunk
 
   if (res.ok) {
     const data = await res.json(); // converting this from json to javascript
-    const spotData = { allSpots: {} }
+    const spotData = {}
     for (let i = 0; i < data.Spots.length; i++) {
       let currentObj = data.Spots[i]
-      spotData.allSpots[currentObj.id] = currentObj
+      spotData[currentObj.id] = currentObj
     }
     dispatch(getSpot(spotData))
     return spotData;
@@ -55,10 +55,10 @@ export const fetchGetMySpots = () => async (dispatch) => { // thunk
 
   if (res.ok) {
     const data = await res.json(); // converting this from json to javascript
-    const spotData = { mySpots: {} }
+    const spotData = {}
     for (let i = 0; i < data.Spots.length; i++) {
       let currentObj = data.Spots[i]
-      spotData.mySpots[currentObj.id] = currentObj
+      spotData[currentObj.id] = currentObj
     }
     dispatch(getMySpot(spotData))
     return spotData;
@@ -104,13 +104,13 @@ export const createSpot = (payload) => async (dispatch) => {
 const spotReducer = (state = {}, action) => {
   switch (action.type) {
     case GET_SPOTS:
-      return { ...state, ...action.currentSpots }
+      return { ...state, allSpots: action.currentSpots }
     case SPOT_DETAILS:
       return { ...state, spotDetails: action.spotDetails }
     case ADD_SPOTS:
-      return { ...state, newSpot: action.newSpot }
+      return { ...state, spotDetails: action.newSpot }
     case GET_MY_SPOTS:
-      return { ...state, ...action.mySpots }
+      return { ...state, allSpots: action.mySpots }
     default:
       return state
   }

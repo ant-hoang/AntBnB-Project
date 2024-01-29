@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getSpotDetails } from '../../store/spots'
 import { fetchSpotReviews } from '../../store/reviews'
+import OpenModalMenuItem from '../Navigation/OpenModalMenuItem'
+import ReviewFormModal from '../ReviewFormModal/ReviewFormModal'
 import GetSpotReviews from '../GetSpotReviews/GetSpotReviews'
 import './SpotDetails.css'
 import star from '../images/star-vector-icon.jpg'
@@ -11,39 +13,59 @@ const SpotDetails = () => {
   const dispatch = useDispatch()
   const { spotId } = useParams()
   const [isLoading, setIsLoading] = useState(true)
-  let session = useSelector((state) => state.session)
-  let spot = useSelector((state) => state.spots.spotDetails)
-  let reviews = useSelector((state) => state.reviews.spotReviews)
-  let props = { session, spot, reviews }
+  const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 
 
-  // const reviewArr = Object.values(reviews).reverse() || []
   // // checks if user has submitted a review
-  // const checkUser = session.user ? reviewArr.find((obj) => obj.userId == session.user.id) : false
 
-  // // checks if user owns the spot
-  // const checkOwner = (session.user && session.user.id == spot.ownerId) ? true : false
+  const [checkUser, setCheckUser] = useState(0)
+  // console.log("checkUser:", checkUser)
 
-  // const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-
-
-
+  // // // checks if user owns the spot
+  const [checkOwner, setOwnerUser] = useState(false)
+  // const checkOwner = (session.user && session.user.id === spot.ownerId) ? true : false
+  // console.log("CHECKOWNER: ", checkOwner)
+  
+  
+  
+  
+  
   const handleReserve = (e) => {
     e.preventDefault()
     alert("Feature coming soon")
   }
-
+  
   useEffect(() => {
     setIsLoading(true)
-    dispatch(getSpotDetails(spotId))
-      .then(() => dispatch(fetchSpotReviews(spotId)))
-      .then(() => <GetSpotReviews />)
-      .then(() => setIsLoading(false))
-  }, [dispatch, spotId])
+    
+    if (session.user && reviewArr.length) {
+      setCheckUser(reviewArr.findIndex((obj) => obj.userId == session.user.id) + 1)
+    }
+    if (session.user) {
+      setOwnerUser((session.user.id == spot.ownerId))
+    }
 
+
+    dispatch(getSpotDetails(spotId))
+    .then(() => dispatch(fetchSpotReviews(spotId)))
+    .then(() => setIsLoading(false))
+
+    return
+  }, [dispatch, spotId])
+  
+  const sessionState = useSelector((state) => state.session)
+  const session = sessionState
+  const spotState = useSelector((state) => state.spots.spotDetails)
+  const spot = spotState
+  const reviewState = useSelector((state) => state.reviews.spotReviews) || {}
+  const reviews = reviewState
+  const reviewArr = Object.values(reviews).reverse() || []
+  let props = { checkUser, setCheckUser }
+  
   return (
     <div>
+      {/* Spot Details */}
       <div>{isLoading ? <h2>...Loading</h2> :
         <div className="heading">
           <h1>{spot.name}</h1>
@@ -62,9 +84,9 @@ const SpotDetails = () => {
                   className='star'
                   style={{ height: 14, width: 14 }}
                   src={star}
-                  alt='star'
+                  alt=''
                 />
-                <span>{spot.avgRating ? parseFloat(spot.avgRating).toFixed(1) : "New"}</span>
+                {spot.avgRating ? parseFloat(spot.avgRating).toFixed(1) : "New"}
                 {!spot.numReviews ? null : spot.numReviews > 1 ? <span>{spot.numReviews} reviews</span> : <span>{spot.numReviews} review</span>}
               </div>
               <div className='reserve-button'>
@@ -80,10 +102,56 @@ const SpotDetails = () => {
 
 
 
-      
+      {/* Reviews Summary */}
       <div>
-        {reviews && <GetSpotReviews {...props} />}
+        {/* {reviews && <GetSpotReviews {...props} />}*/}
+
+
+
+
+        <div>
+          <img
+            className='star'
+            style={{ height: 14, width: 14 }}
+            src={star}
+            alt=''
+          />
+          <span>{spot.avgRating && spot.avgRating ? parseFloat(spot.avgRating).toFixed(1) : "New"}</span>
+          {!spot.numReviews ? null : spot.numReviews > 1 ? <span> &#x2022; {spot.numReviews} reviews</span> : <span> &#x2022; {spot.numReviews} review</span>}
+        </div>
       </div>
+
+
+
+
+      <div className="review-modal-button">
+        {session.user && !checkUser && !checkOwner && <OpenModalMenuItem
+          itemText={<button>Post Your Review</button>}
+          // onItemClick={closeMenu}
+          modalComponent={<ReviewFormModal {...props}/>}
+        />}
+
+      </div>
+
+
+
+
+
+      <div>
+        {!reviewArr.length ? <span>Be the first to post a review!</span> :
+          reviewArr.map((review) => {
+            return (
+              <div key={reviewArr.id}>
+                <h3>{review.User.firstName}</h3>
+                <h4>{monthNames[parseInt(review.createdAt.slice(5, 7)) - 1]} <span>{review.createdAt.slice(0, 4)}</span></h4>
+                <h5>{review.review}</h5>
+              </div>
+            )
+          })}
+      </div>
+
+
+
     </div>
   )
 }

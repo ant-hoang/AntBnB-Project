@@ -56,7 +56,7 @@ const reviewReducer = (state = {}, action) => {
     case GET_REVIEWS:
       return { ...state, ...action.reviews}
     case NEW_REVIEW:
-      return { ...state, createdReview: action.review }
+      return { ...state, ...action.review }
     default:
       return state
   }

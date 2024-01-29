@@ -8,7 +8,7 @@ import star from '../images/star-vector-icon.jpg'
 function ManageSpots() {
   const dispatch = useDispatch()
 
-  const fetchMySpots = useSelector((state) => state.spots.mySpots) || {}
+  const fetchMySpots = useSelector((state) => state.spots.allSpots) || {}
   const spots = Object.values(fetchMySpots)
 
   useEffect(() => {

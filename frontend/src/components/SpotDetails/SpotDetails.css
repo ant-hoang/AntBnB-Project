@@ -3,6 +3,10 @@
   width: 700px;
 }
 
+.review-modal-button {
+  list-style-type: none;
+}
+
 .summary-container {
   display: grid;
   grid-template-columns: 8fr 2fr;

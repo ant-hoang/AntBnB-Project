@@ -17,7 +17,7 @@ function Navigation({ isLoaded }) {
   return (
     <>
       <div className={navigationClass}>
-        <div>
+        <div className="home-link">
           <NavLink exact to="/" >
             <i className="fa-solid fa-house" />
             <span>Ant-BnB</span>
@@ -33,7 +33,7 @@ function Navigation({ isLoaded }) {
         )}
 
         {isLoaded && (
-          <div>
+          <div className='navigation-profile-button'>
             <ProfileButton user={sessionUser} />
           </div>
         )}
