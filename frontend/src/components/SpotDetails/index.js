@@ -5,6 +5,7 @@ import { getSpotDetails } from '../../store/spots'
 import { fetchSpotReviews } from '../../store/reviews'
 import OpenModalMenuItem from '../Navigation/OpenModalMenuItem'
 import ReviewFormModal from '../ReviewFormModal/ReviewFormModal'
+import DeleteReviewModal from '../DeleteReviewModal'
 import GetSpotReviews from '../GetSpotReviews/GetSpotReviews'
 import './SpotDetails.css'
 import star from '../images/star-vector-icon.jpg'
@@ -17,42 +18,25 @@ const SpotDetails = () => {
   const spot = useSelector((state) => state.spots.spotDetails) || {}
   const reviews = useSelector((state) => state.reviews)
   const reviewArr = Object.values(reviews).reverse()
+  
+  let findReview = false
+  if(sessionUser) findReview = !reviewArr.find((obj) => obj.userId == sessionUser.id)
 
   const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-  const [checkUser, setCheckUser] = useState(0)
-  const [checkOwner, setCheckOwner] = useState(false)
 
   const handleReserve = (e) => {
     e.preventDefault()
     alert("Feature coming soon")
   }
 
-  const checkList = () => {
-    setCheckUser(0)
-    setCheckOwner(false)
-    if (sessionUser && spot.id) {
-      setCheckOwner((sessionUser.id === spot.ownerId))
-    } 
-    if (sessionUser && reviewArr.length) {
-      setCheckUser(reviewArr.findIndex((obj) => obj.userId === sessionUser.id) + 1)
-    }
-
-    return
-  }
-
   useEffect(() => {
-
-    checkList()
-    console.log(checkUser)
-    console.log(checkOwner)
     setIsLoading(true)
 
     dispatch(getSpotDetails(spotId))
       .then(() => dispatch(fetchSpotReviews(spotId)))
       .then(() => setIsLoading(false))
 
-    return
-  }, [dispatch, checkOwner, checkUser])
+  }, [dispatch])
 
   return (
     <div>
@@ -94,8 +78,7 @@ const SpotDetails = () => {
 
           {/* Reviews Summary */}
           {/* {reviews && <GetSpotReviews {...props} />}*/}
-          {isLoading ? <h2></h2> :
-            <div>
+            {<div>
               <img
                 className='star'
                 style={{ height: 14, width: 14 }}
@@ -110,14 +93,15 @@ const SpotDetails = () => {
 
 
           <div className="review-modal-button">
-            {sessionUser && !checkUser && !checkOwner && <button>
+            {sessionUser && findReview && sessionUser.id !== spot.ownerId ? 
+            <button>
               {<OpenModalMenuItem
                 itemText={"Post Your Review"}
                 // onItemClick={closeMenu}
-                modalComponent={<ReviewFormModal />}
+                modalComponent={<ReviewFormModal {...spot}/>}
               />}
             </button>
-            }
+            : ""}
           </div>
 
 
@@ -131,7 +115,14 @@ const SpotDetails = () => {
                     <h3>{review.User.firstName}</h3>
                     <h4>{monthNames[parseInt(review.createdAt.slice(5, 7)) - 1]} <span>{review.createdAt.slice(0, 4)}</span></h4>
                     <h5>{review.review}</h5>
-                    {checkUser ? <button>Delete</button> : ''}
+                    {sessionUser && review.userId == sessionUser.id ? 
+                    <button>
+                    <OpenModalMenuItem 
+                      itemText={"Delete"}
+                      modalComponent={<DeleteReviewModal {...review}/>}
+                    />
+                    </button>
+                    : ''}
                   </div>
                 )
               })}

@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom'
 import './SpotUpdate.css';
 
 function SpotUpdate() {
-  const [address, setAddress] = useState("")
+  const [address, setAddress] = useState("asddfasdfasf")
   const [city, setCity] = useState("")
   const [state, setState] = useState("")
   const [country, setCountry] = useState("")
@@ -15,11 +15,11 @@ function SpotUpdate() {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState("")
-  const [previewImage, setPreviewImage] = useState("")
-  const [image2, setImage2] = useState("")
-  const [image3, setImage3] = useState("")
-  const [image4, setImage4] = useState("")
-  const [image5, setImage5] = useState("")
+  // const [previewImage, setPreviewImage] = useState("")
+  // const [image2, setImage2] = useState("")
+  // const [image3, setImage3] = useState("")
+  // const [image4, setImage4] = useState("")
+  // const [image5, setImage5] = useState("")
   const [errors, setErrors] = useState([])
 
   const dispatch = useDispatch()
@@ -29,7 +29,7 @@ function SpotUpdate() {
     e.preventDefault();
 
     setErrors([])
-    const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price, previewImage)
+    const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price)
     setErrors(errorList)
     if (errors.length) return
 
@@ -45,16 +45,10 @@ function SpotUpdate() {
       price: parseFloat(price)
     }
 
-    const images = settingImages(previewImage, image2, image3, image4, image5)
+    // const images = settingImages(previewImage, image2, image3, image4, image5)
 
     dispatch(createSpot(payload))
       .then((spot) => {
-        for (let i = 0; i < images.length; i++) {
-          let currObj = images[i]
-          if (currObj.url) {
-            dispatch(createImage(currObj, spot.id))
-          }
-        }
         history.push(`/spots/${spot.id}`)
       })
 
@@ -72,20 +66,19 @@ function SpotUpdate() {
     if (!description || description.length < 30) errorList.push('Description needs 30 or more characters')
     if (!name) errorList.push('Name is required')
     if (!price) errorList.push('Price is required')
-    if (!previewImage) errorList.push('Preview image is required')
 
     return errorList
   }
 
-  const settingImages = (i1, i2, i3, i4, i5) => {
-    const images = []
-    images.push({ "url": i1, "preview": true })
-    images.push({ "url": i2, "preview": false })
-    images.push({ "url": i3, "preview": false })
-    images.push({ "url": i4, "preview": false })
-    images.push({ "url": i5, "preview": false })
-    return images
-  }
+  // const settingImages = (i1, i2, i3, i4, i5) => {
+  //   const images = []
+  //   images.push({ "url": i1, "preview": true })
+  //   images.push({ "url": i2, "preview": false })
+  //   images.push({ "url": i3, "preview": false })
+  //   images.push({ "url": i4, "preview": false })
+  //   images.push({ "url": i5, "preview": false })
+  //   return images
+  // }
 
   const reset = () => {
     setAddress("")
@@ -97,12 +90,16 @@ function SpotUpdate() {
     setName("")
     setDescription("")
     setPrice("")
-    setPreviewImage("")
-    setImage2("")
-    setImage3("")
-    setImage4("")
-    setImage5("")
+    // setPreviewImage("")
+    // setImage2("")
+    // setImage3("")
+    // setImage4("")
+    // setImage5("")
   }
+
+  useEffect(() => {
+    
+  }, [])
 
   return (
     <div>
@@ -129,7 +126,6 @@ function SpotUpdate() {
           <input
             id="address"
             type="text"
-            placeholder='Address'
             onChange={(e) => setAddress(e.target.value)}
             value={address}
           />
@@ -213,7 +209,7 @@ function SpotUpdate() {
             value={price}
           />
         </div>
-        <div>
+        {/* <div>
           <h2>Liven up your spot with photos</h2>
           <caption>Submit a link to at least one photo to publish your spot</caption>
         </div>
@@ -263,7 +259,7 @@ function SpotUpdate() {
               value={image5}
             />
           </div>
-        </div>
+        </div> */}
         <button>Update your Spot</button>
       </form>
     </div>

@@ -2,6 +2,7 @@ import { csrfFetch } from "./csrf"
 
 const GET_REVIEWS = "reviews/getReviews"
 const NEW_REVIEW = "reviews/newReview"
+const DELETE_REVIEW = "reviews/deleteReview"
 
 const getReviews = (reviews) => {
   return {
@@ -13,6 +14,13 @@ const getReviews = (reviews) => {
 const newReview = (review) => {
   return {
     type: NEW_REVIEW,
+    review
+  }
+}
+
+const deleteReview = (review) => {
+  return {
+    type: DELETE_REVIEW,
     review
   }
 }
@@ -51,11 +59,22 @@ export const fetchCreateReview = (spotId, payload) => async (dispatch) => {
   return res
 }
 
+export const fetchDeleteReview = (reviewId) => async (dispatch) => {
+  const res = await csrfFetch(`/api/reviews/${reviewId}`, {
+    method: 'DELETE'
+  })
+
+  if (res.ok) {
+    dispatch(deleteReview())
+  }
+}
+
 const reviewReducer = (state = {}, action) => {
   switch(action.type) {
     case GET_REVIEWS:
-      return { ...state, ...action.reviews}
+      return { ...action.reviews }
     case NEW_REVIEW:
+      console.log("STATE IS UPDATED", { ...state, ...action.review })
       return { ...state, ...action.review }
     default:
       return state

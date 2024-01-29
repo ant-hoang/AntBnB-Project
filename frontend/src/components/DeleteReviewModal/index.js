@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import * as sessionActions from "../../store/session";
 import { useDispatch } from "react-redux";
 import { useModal } from "../../context/Modal";
-import { fetchDeleteSpot, fetchGetMySpots } from "../../store/spots";
-import "./DeleteSpotModal.css";
+import { fetchDeleteReview, fetchSpotReviews } from "../../store/reviews";
 
-function DeleteSpotModal(el) {
+function DeleteReviewModal ({id, spotId}) {
   const dispatch = useDispatch();
   const { closeModal } = useModal();
 
@@ -13,8 +12,8 @@ function DeleteSpotModal(el) {
     e.preventDefault()
     e.stopPropagation()
 
-    dispatch(fetchDeleteSpot(el.id))
-      .then(() => dispatch(fetchGetMySpots()))
+    dispatch(fetchDeleteReview(id))
+      .then(() => dispatch(fetchSpotReviews(spotId)))
       .then(closeModal)
   }
 
@@ -27,16 +26,16 @@ function DeleteSpotModal(el) {
   return (
     <div className="delete-container">
       <h1 className="delete-text">Confirm Delete</h1>
-      <h3 className="delete-text">Are you sure you want to remove this spot?</h3>
+      <h3 className="delete-text">Are you sure you want to delete this review?</h3>
       <div className="delete-button red">
-        <button className="red-button" onClick={handleDelete}>Yes (Delete Spot)</button>
+        <button className="red-button" onClick={handleDelete}>Yes (Delete Review)</button>
       </div>
       <div className="delete-button gray">
-        <button className="gray-button" onClick={handleCancel}>No (Keep Spot)</button>
+        <button className="gray-button" onClick={handleCancel}>No (Keep Review)</button>
       </div>
     </div>
 
   )
 }
 
-export default DeleteSpotModal
+export default DeleteReviewModal
