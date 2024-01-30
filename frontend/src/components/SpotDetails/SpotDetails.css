@@ -1,6 +1,7 @@
 .previewImage {
   height: 400px;
   width: 700px;
+  margin-right: 20px;
 }
 
 .review-modal-button {
@@ -31,4 +32,14 @@
 .reserve-button {
   display: grid;
   justify-content: center;
+}
+
+.image-container {
+  display: flex;
+  flex-wrap: column wrap;
+}
+
+.small-images {
+  height: 198px;
+  width: 350px;
 }
