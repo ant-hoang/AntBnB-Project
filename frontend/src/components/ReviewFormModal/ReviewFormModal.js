@@ -101,7 +101,7 @@ function ReviewFormModal(spot) {
             );
           })} Stars
         </label>
-        <button disabled={review.length < 10 && !rating} className="review-button" type="submit">Submit Your Review</button>
+        <button disabled={review.length < 10 || !rating} className="review-button" type="submit">Submit Your Review</button>
       </form>
     </div>
   )
