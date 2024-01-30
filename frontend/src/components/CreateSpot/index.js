@@ -32,7 +32,6 @@ const CreateSpot = () => {
     setErrors([])
     const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price, previewImage)
     setErrors(errorList)
-    console.log("ERRORLIST", errorList)
     if (errorList.length) return
 
     const payload = {
