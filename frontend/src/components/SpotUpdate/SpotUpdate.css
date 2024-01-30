@@ -1,0 +1,93 @@
+.spot-form-h1 {
+  display: flex;
+  justify-content: center;
+}
+
+.spot-form-h2 {
+  display: flex;
+  justify-content: center;
+}
+
+.spot-caption-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 570px;
+  height: 70px;
+  width: 400px;
+  text-align: left;
+}
+
+.spot-form {
+  display: grid;
+  grid-template-rows: auto;
+  justify-content: center;
+  margin-top: 20px;
+  margin-left: 39px;
+}
+
+.city-state {
+  display: flex;
+}
+
+.lat-lng {
+  display: flex;
+}
+
+.country-input {
+  width: 342px;
+}
+
+.bottom-caption {
+  height: 70px;
+  width: 400px;
+  text-align: left;
+}
+
+#description {
+  height: 100px;
+  width: 400px;
+  text-align: left;
+  resize: none;
+}
+
+#name {
+  width: 400px;
+}
+
+#price {
+  width: 380px;
+  margin-bottom: 50px;
+}
+
+.submit-button {
+  background-color: red;
+  color: white;
+  width: 200px;
+  margin-left: 100px;
+}
+
+#image-1 {
+  width: 400px;
+  margin-bottom: 20px;
+}
+
+#image-2 {
+  width: 400px;
+  margin-bottom: 20px;
+}
+
+#image-3 {
+  width: 400px;
+  margin-bottom: 20px;
+}
+
+#image-4 {
+  width: 400px;
+  margin-bottom: 20px;
+}
+
+#image-5 {
+  width: 400px;
+  margin-bottom: 20px;
+}

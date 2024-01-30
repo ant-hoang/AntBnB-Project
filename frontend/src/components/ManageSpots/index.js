@@ -14,13 +14,6 @@ function ManageSpots() {
   const fetchMySpots = useSelector((state) => state.spots.allSpots) || {}
   const spots = Object.values(fetchMySpots)
 
-  const handleUpdate = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    console.log("what does e have", e)
-
-  }
-
   useEffect(() => {
     setIsLoading(true)
     dispatch(fetchGetMySpots()).then(() => setIsLoading(false))
@@ -62,7 +55,7 @@ function ManageSpots() {
                       </div>
                     </NavLink>
                     <div className="manage-buttons-container">
-                      <button onClick={handleUpdate} className="manage-buttons update">
+                      <button className="manage-buttons update">
                       {<NavLink to={`/spots/${el.id}/edit`}>
                           Update
                         </NavLink>}

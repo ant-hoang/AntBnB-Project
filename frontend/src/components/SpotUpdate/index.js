@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createSpot } from '../../store/spots'
+import { updateSpot } from '../../store/spots'
 import { createImage } from '../../store/images'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
+import { getSpotDetails } from '../../store/spots'
 import './SpotUpdate.css';
 
 function SpotUpdate() {
-  const [address, setAddress] = useState("asddfasdfasf")
-  const [city, setCity] = useState("")
-  const [state, setState] = useState("")
-  const [country, setCountry] = useState("")
-  const [lat, setLat] = useState("")
-  const [lng, setLng] = useState("")
-  const [name, setName] = useState("")
-  const [description, setDescription] = useState("")
-  const [price, setPrice] = useState("")
+  const spot = useSelector((state) => state.spots.spotDetails)
+  const [address, setAddress] = useState(spot?.address)
+  const [city, setCity] = useState(spot?.city)
+  const [state, setState] = useState(spot?.state)
+  const [country, setCountry] = useState(spot?.country)
+  const [lat, setLat] = useState(spot?.lat)
+  const [lng, setLng] = useState(spot?.lng)
+  const [name, setName] = useState(spot?.name)
+  const [description, setDescription] = useState(spot?.description)
+  const [price, setPrice] = useState(spot?.price)
   // const [previewImage, setPreviewImage] = useState("")
   // const [image2, setImage2] = useState("")
   // const [image3, setImage3] = useState("")
@@ -24,12 +26,15 @@ function SpotUpdate() {
 
   const dispatch = useDispatch()
   const history = useHistory()
+  const { spotId } = useParams()
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     setErrors([])
     const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price)
+    console.log(errorList)
     setErrors(errorList)
     if (errors.length) return
 
@@ -45,14 +50,14 @@ function SpotUpdate() {
       price: parseFloat(price)
     }
 
+    console.log("PAYLOAD", payload)
     // const images = settingImages(previewImage, image2, image3, image4, image5)
 
-    dispatch(createSpot(payload))
+    dispatch(updateSpot(payload, spotId))
       .then((spot) => {
         history.push(`/spots/${spot.id}`)
       })
 
-    reset()
   }
 
   const checkErrors = (address, city, state, country, lat, lng, name, description, price, previewImage) => {
@@ -81,15 +86,15 @@ function SpotUpdate() {
   // }
 
   const reset = () => {
-    setAddress("")
-    setCity("")
-    setState("")
-    setCountry("")
-    setLat("")
-    setLng("")
-    setName("")
-    setDescription("")
-    setPrice("")
+    setAddress(spot?.address)
+    setCity(spot?.city)
+    setState(spot?.state)
+    setCountry(spot?.country)
+    setLat(spot?.lat)
+    setLng(spot?.lng)
+    setName(spot?.name)
+    setDescription(spot?.description)
+    setPrice(spot?.price)
     // setPreviewImage("")
     // setImage2("")
     // setImage3("")
@@ -98,113 +103,141 @@ function SpotUpdate() {
   }
 
   useEffect(() => {
-    
-  }, [])
+    setAddress(spot?.address)
+    setCity(spot?.city)
+    setState(spot?.state)
+    setCountry(spot?.country)
+    setLat(spot?.lat)
+    setLng(spot?.lng)
+    setName(spot?.name)
+    setDescription(spot?.description)
+    setPrice(spot?.price)
+    dispatch(getSpotDetails(spotId))
+  }, [dispatch])
 
   return (
     <div>
       <ul className='errors'>
         {errors.length ? errors.map((error) => <li key={error}>{error}</li>) : ''}
       </ul>
-      <h1>Update your Spot</h1>
-      <h2>Where's your place located?</h2>
-      <caption>Guests will only get your exact address once they booked a reservation.</caption>
+      <h1 className="spot-form-h1">Update your Spot</h1>
+      <h2 className="spot-form-h2">Where's your place located?</h2>
+      <caption className="spot-caption-header">Guests will only get your exact address once they booked a reservation.</caption>
 
-      <form onSubmit={handleSubmit}>
+      <form className="spot-form" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="country">Country</label>
+          <div className="labels">
+            <label htmlFor="country">Country</label>
+          </div>
           <input
+            className='country-input'
             id="country"
             type="text"
-            placeholder='Country'
             onChange={(e) => setCountry(e.target.value)}
             value={country}
           />
         </div>
         <div>
-          <label htmlFor="address">address</label>
+          <div className="labels">
+            <label htmlFor="address">Address</label>
+          </div>
           <input
+            className='country-input'
             id="address"
             type="text"
             onChange={(e) => setAddress(e.target.value)}
             value={address}
           />
         </div>
-        <div>
-          <label htmlFor="city">city</label>
-          <input
-            id="city"
-            type="text"
-            placeholder='City'
-            onChange={(e) => setCity(e.target.value)}
-            value={city}
-          />
+
+        <div className='city-state'>
+          <div>
+            <div className="labels">
+              <label htmlFor="city">City</label>
+            </div>
+            <input
+              id="city"
+              type="text"
+              onChange={(e) => setCity(e.target.value)}
+              value={city}
+            />, &nbsp;
+          </div>
+          <div>
+            <div className="labels">
+              <label htmlFor="state">State</label>
+            </div>
+            <input
+              id="state"
+              type="text"
+              onChange={(e) => setState(e.target.value)}
+              value={state}
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="state">state</label>
-          <input
-            id="state"
-            type="text"
-            placeholder='STATE'
-            onChange={(e) => setState(e.target.value)}
-            value={state}
-          />
+
+
+
+        <div className='lat-lng'>
+          <div>
+            <div className="labels">
+              <label htmlFor="lat">Latitude</label>
+            </div>
+            <input
+              id="lat"
+              type="text"
+              onChange={(e) => setLat(e.target.value)}
+              value={lat}
+            />, &nbsp;
+          </div>
+          <div>
+            <div className="labels">
+              <label htmlFor="lng">Longitude</label>
+            </div>
+            <input
+              id="lng"
+              type="text"
+              onChange={(e) => setLng(e.target.value)}
+              value={lng}
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="lat">lat</label>
-          <input
-            id="lat"
-            type="text"
-            placeholder='Latitude'
-            onChange={(e) => setLat(e.target.value)}
-            value={lat}
-          />
-        </div>
-        <div>
-          <label htmlFor="lng">lng</label>
-          <input
-            id="lng"
-            type="text"
-            placeholder='Longitude'
-            onChange={(e) => setLng(e.target.value)}
-            value={lng}
-          />
-        </div>
+
+
+
         <div>
           <h2>Describe your place to guests</h2>
-          <caption>Mention the best features of your space, any special amentities like fast wifi or parking, and what you love about the neighborhood</caption>
+          <caption className="bottom-caption">Mention the best features of your space, any special amentities like fast wifi or parking, and what you love about the neighborhood</caption>
         </div>
         <div>
-          <input
+          <textarea
             id="description"
             type="text"
-            placeholder='Description'
             onChange={(e) => setDescription(e.target.value)}
             value={description}
-          />
+          >
+          </textarea>
         </div>
         <div>
           <h2>Create a title for your spot</h2>
-          <caption>Catch guest' attention with a spot title that highlights what makes your space special.</caption>
+          <caption className="bottom-caption">Catch guest' attention with a spot title that highlights what makes your space special.</caption>
         </div>
         <div>
           <input
             id="name"
             type="text"
-            placeholder='Name of your spot'
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
         </div>
         <div>
           <h2>Set a base price for your spot</h2>
-          <caption>Competitive pricing can help your listing stand out and rank higher in search results.</caption>
+          <caption className="bottom-caption">Competitive pricing can help your listing stand out and rank higher in search results.</caption>
         </div>
         <div>
+          $ &nbsp;
           <input
             id="price"
             type="text"
-            placeholder='Price per night (USD)'
             onChange={(e) => setPrice(e.target.value)}
             value={price}
           />
@@ -260,7 +293,7 @@ function SpotUpdate() {
             />
           </div>
         </div> */}
-        <button>Update your Spot</button>
+        <button className="submit-button">Update your Spot</button>
       </form>
     </div>
   )

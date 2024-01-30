@@ -50,7 +50,7 @@ const SpotDetails = () => {
             {/*imaging smaller images here coming soon */}
             <div className='summary-container'>
               <div className='description-container'>
-                <span>Hosted by: {spot.Owner.firstName}, {spot.Owner.lastName}</span>
+                <span>Hosted by: {spot.Owner?.firstName}, {spot.Owner?.lastName}</span>
                 <p>{spot.description}</p>
               </div>
               <div className='callout-container'>
@@ -112,9 +112,9 @@ const SpotDetails = () => {
               reviewArr.map((review) => {
                 return (
                   <div key={reviewArr.id}>
-                    <h3>{review.User.firstName}</h3>
-                    <h4>{monthNames[parseInt(review.createdAt.slice(5, 7)) - 1]} <span>{review.createdAt.slice(0, 4)}</span></h4>
-                    <h5>{review.review}</h5>
+                    <h3>{review.User?.firstName}</h3>
+                    <h4>{monthNames[parseInt(review.createdAt?.slice(5, 7)) - 1]} <span>{review.createdAt?.slice(0, 4)}</span></h4>
+                    <h5>{review?.review}</h5>
                     {sessionUser && review.userId == sessionUser.id ? 
                     <button>
                     <OpenModalMenuItem 
