@@ -2,6 +2,7 @@
   display: none;
 }
 
+
 .menu-icon {
   width: 35px;
   height: 30px;
@@ -10,8 +11,24 @@
 .logs {
   width: 80px;
   height: 25px;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 .profile-dropdown {
   list-style-type: none;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-flow: column wrap-reverse;
+}
+
+.menu-position {
+  display: flex;
+  flex-flow: column wrap-reverse;
+}
+
+.demo-log {
+  height: 25px;
 }

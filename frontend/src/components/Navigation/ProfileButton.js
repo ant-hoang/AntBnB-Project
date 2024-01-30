@@ -13,6 +13,11 @@ function ProfileButton({ user }) {
   const [showMenu, setShowMenu] = useState(false);
   const ulRef = useRef();
 
+  const handleDemo = (e) => {
+    e.preventDefault();
+    return dispatch(sessionActions.login({ credential: "Demo-lition", password: "password"}))
+  }
+
   const toggleMenu = (e) => {
     e.stopPropagation();
     setShowMenu(!showMenu);
@@ -44,9 +49,11 @@ function ProfileButton({ user }) {
 
   return (
     <>
+    <div className="menu-position">
       <button className="menu-icon" onClick={toggleMenu}>
         <i className="fa-solid fa-bars" />
       </button>
+    </div>
       <div className={profileClassName} ref={ulRef}>
         {user ? (
           <>
@@ -57,20 +64,27 @@ function ProfileButton({ user }) {
                 Manage Spots
               </NavLink>
             </button>
-              <button onClick={logout}>Log Out</button>
+            <button onClick={logout}>Log Out</button>
           </>
         ) : (
           <>
-            <OpenModalMenuItem
-              itemText={<button className="logs">Log In</button>}
-              onItemClick={closeMenu}
-              modalComponent={<LoginFormModal />}
-            />
-            <OpenModalMenuItem
-              itemText={<button className="logs">Sign Up</button>}
-              onItemClick={closeMenu}
-              modalComponent={<SignupFormModal />}
-            />
+            <div className="menu-buttons">
+              <button className="logs">
+                <OpenModalMenuItem
+                  itemText="Log In"
+                  onItemClick={closeMenu}
+                  modalComponent={<LoginFormModal />}
+                />
+              </button>
+              <button className="logs">
+                <OpenModalMenuItem
+                  itemText={"Sign Up"}
+                  onItemClick={closeMenu}
+                  modalComponent={<SignupFormModal />}
+                />
+              </button>
+              <button className="demo-log" onClick={(handleDemo)}>Log in as Demo User</button>
+            </div>
           </>
         )}
       </div>

@@ -18,9 +18,9 @@ const SpotDetails = () => {
   const spot = useSelector((state) => state.spots.spotDetails) || {}
   const reviews = useSelector((state) => state.reviews)
   const reviewArr = Object.values(reviews).reverse()
-  
+
   let findReview = false
-  if(sessionUser) findReview = !reviewArr.find((obj) => obj.userId == sessionUser.id)
+  if (sessionUser) findReview = !reviewArr.find((obj) => obj.userId == sessionUser.id)
 
   const monthNames = ['January', 'February', 'March,', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -46,8 +46,19 @@ const SpotDetails = () => {
           <div className="heading">
             <h1>{spot.name}</h1>
             <h2>Location: {spot.city}, {spot.state}, {spot.country}</h2>
-            <img className="previewImage" src={spot.previewImage}></img>
-            {/*imaging smaller images here coming soon */}
+            <div className='image-container'>
+              <img className="previewImage" src={spot.previewImage}></img>
+              <div>
+                {spot.SpotImages.length > 1 ? spot.SpotImages?.map((image) => {
+                  return (
+                    <div>
+                      <img className="small-images" src={image.url}>
+                      </img>
+                    </div>
+                  )
+                }) : ""}
+              </div>
+            </div>
             <div className='summary-container'>
               <div className='description-container'>
                 <span>Hosted by: {spot.Owner?.firstName}, {spot.Owner?.lastName}</span>
@@ -78,30 +89,30 @@ const SpotDetails = () => {
 
           {/* Reviews Summary */}
           {/* {reviews && <GetSpotReviews {...props} />}*/}
-            {<div>
-              <img
-                className='star'
-                style={{ height: 14, width: 14 }}
-                src={star}
-                alt=''
-              />
-              <span>{spot.avgRating && spot.avgRating ? parseFloat(spot.avgRating).toFixed(1) : "New"}</span>
-              {!spot.numReviews ? null : spot.numReviews > 1 ? <span> &#x2022; {spot.numReviews} reviews</span> : <span> &#x2022; {spot.numReviews} review</span>}
-            </div>}
+          {<div>
+            <img
+              className='star'
+              style={{ height: 14, width: 14 }}
+              src={star}
+              alt=''
+            />
+            <span>{spot.avgRating && spot.avgRating ? parseFloat(spot.avgRating).toFixed(1) : "New"}</span>
+            {!spot.numReviews ? null : spot.numReviews > 1 ? <span> &#x2022; {spot.numReviews} reviews</span> : <span> &#x2022; {spot.numReviews} review</span>}
+          </div>}
 
 
 
 
           <div className="review-modal-button">
-            {sessionUser && findReview && sessionUser.id !== spot.ownerId ? 
-            <button>
-              {<OpenModalMenuItem
-                itemText={"Post Your Review"}
-                // onItemClick={closeMenu}
-                modalComponent={<ReviewFormModal {...spot}/>}
-              />}
-            </button>
-            : ""}
+            {sessionUser && findReview && sessionUser.id !== spot.ownerId ?
+              <button>
+                {<OpenModalMenuItem
+                  itemText={"Post Your Review"}
+                  // onItemClick={closeMenu}
+                  modalComponent={<ReviewFormModal {...spot} />}
+                />}
+              </button>
+              : ""}
           </div>
 
 
@@ -115,14 +126,14 @@ const SpotDetails = () => {
                     <h3>{review.User?.firstName}</h3>
                     <h4>{monthNames[parseInt(review.createdAt?.slice(5, 7)) - 1]} <span>{review.createdAt?.slice(0, 4)}</span></h4>
                     <h5>{review?.review}</h5>
-                    {sessionUser && review.userId == sessionUser.id ? 
-                    <button>
-                    <OpenModalMenuItem 
-                      itemText={"Delete"}
-                      modalComponent={<DeleteReviewModal {...review}/>}
-                    />
-                    </button>
-                    : ''}
+                    {sessionUser && review.userId == sessionUser.id ?
+                      <button>
+                        <OpenModalMenuItem
+                          itemText={"Delete"}
+                          modalComponent={<DeleteReviewModal {...review} />}
+                        />
+                      </button>
+                      : ''}
                   </div>
                 )
               })}
