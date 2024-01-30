@@ -7,7 +7,6 @@ import star from '../images/star-vector-icon.jpg'
 
 const GetSpots = () => {
   const [isLoading, setIsLoading] = useState(true)
-  // const [errors, setErrors] = useState([])
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -43,7 +42,7 @@ const GetSpots = () => {
                     </div>
                     <span>${el.price} night</span>
                   </div>
-                  <span class="tooltiptext">{el.name}</span>
+                  <span className="tooltiptext">{el.name}</span>
                 </div>
               </NavLink>
             </div>

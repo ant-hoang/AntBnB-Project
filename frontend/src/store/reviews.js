@@ -2,6 +2,7 @@ import { csrfFetch } from "./csrf"
 
 const GET_REVIEWS = "reviews/getReviews"
 const NEW_REVIEW = "reviews/newReview"
+const DELETE_REVIEW = "reviews/deleteReview"
 
 const getReviews = (reviews) => {
   return {
@@ -17,14 +18,21 @@ const newReview = (review) => {
   }
 }
 
+const deleteReview = (review) => {
+  return {
+    type: DELETE_REVIEW,
+    review
+  }
+}
+
 export const fetchSpotReviews = (spotId) => async (dispatch) => {
   const res = await csrfFetch(`/api/spots/${spotId}/reviews`)
   if (res.ok) {
     const data = await res.json()
-    const reviewData = {spotReviews: {}}
+    const reviewData = {}
     for (let i = 0; i < data.Reviews.length; i++) {
       let currentObj = data.Reviews[i]
-      reviewData.spotReviews[currentObj.id] = currentObj
+      reviewData[currentObj.id] = currentObj
     }
 
     dispatch(getReviews(reviewData))
@@ -51,12 +59,23 @@ export const fetchCreateReview = (spotId, payload) => async (dispatch) => {
   return res
 }
 
+export const fetchDeleteReview = (reviewId) => async (dispatch) => {
+  const res = await csrfFetch(`/api/reviews/${reviewId}`, {
+    method: 'DELETE'
+  })
+
+  if (res.ok) {
+    dispatch(deleteReview())
+  }
+}
+
 const reviewReducer = (state = {}, action) => {
   switch(action.type) {
     case GET_REVIEWS:
-      return { ...state, ...action.reviews}
+      return { ...action.reviews }
     case NEW_REVIEW:
-      return { ...state, createdReview: action.review }
+      console.log("STATE IS UPDATED", { ...state, ...action.review })
+      return { ...state, ...action.review }
     default:
       return state
   }

@@ -1,0 +1,29 @@
+.delete-container {
+  height: 200px;
+  width: 500px;
+}
+
+.delete-text {
+  display: flex;
+  justify-content: center;
+}
+
+.delete-button {
+  display: flex;
+  justify-content: center;
+  padding: 10px 25px 10px 25px;
+}
+
+.red-button {
+  background-color: red;
+  color: white;
+  height: 30px;
+  width: 400px;
+}
+
+.gray-button {
+  background-color: gray;
+  color: white;
+  height: 30px;
+  width: 400px;
+}

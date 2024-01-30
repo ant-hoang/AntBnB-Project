@@ -1,39 +1,42 @@
-import './CreateSpot.css'
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { createSpot } from '../../store/spots'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateSpot } from '../../store/spots'
 import { createImage } from '../../store/images'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
+import { getSpotDetails } from '../../store/spots'
+import './SpotUpdate.css';
 
-
-const CreateSpot = () => {
-  const [address, setAddress] = useState("")
-  const [city, setCity] = useState("")
-  const [state, setState] = useState("")
-  const [country, setCountry] = useState("")
-  const [lat, setLat] = useState("")
-  const [lng, setLng] = useState("")
-  const [name, setName] = useState("")
-  const [description, setDescription] = useState("")
-  const [price, setPrice] = useState("")
-  const [previewImage, setPreviewImage] = useState("")
-  const [image2, setImage2] = useState("")
-  const [image3, setImage3] = useState("")
-  const [image4, setImage4] = useState("")
-  const [image5, setImage5] = useState("")
+function SpotUpdate() {
+  const spot = useSelector((state) => state.spots.spotDetails)
+  const [address, setAddress] = useState(spot?.address)
+  const [city, setCity] = useState(spot?.city)
+  const [state, setState] = useState(spot?.state)
+  const [country, setCountry] = useState(spot?.country)
+  const [lat, setLat] = useState(spot?.lat)
+  const [lng, setLng] = useState(spot?.lng)
+  const [name, setName] = useState(spot?.name)
+  const [description, setDescription] = useState(spot?.description)
+  const [price, setPrice] = useState(spot?.price)
+  // const [previewImage, setPreviewImage] = useState("")
+  // const [image2, setImage2] = useState("")
+  // const [image3, setImage3] = useState("")
+  // const [image4, setImage4] = useState("")
+  // const [image5, setImage5] = useState("")
   const [errors, setErrors] = useState([])
 
   const dispatch = useDispatch()
   const history = useHistory()
+  const { spotId } = useParams()
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     setErrors([])
-    const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price, previewImage)
+    const errorList = checkErrors(address, city, state, country, lat, lng, name, description, price)
+    console.log(errorList)
     setErrors(errorList)
-    console.log("ERRORLIST", errorList)
-    if (errorList.length) return
+    if (errors.length) return
 
     const payload = {
       address,
@@ -47,20 +50,14 @@ const CreateSpot = () => {
       price: parseFloat(price)
     }
 
-    const images = settingImages(previewImage, image2, image3, image4, image5)
+    console.log("PAYLOAD", payload)
+    // const images = settingImages(previewImage, image2, image3, image4, image5)
 
-    dispatch(createSpot(payload))
+    dispatch(updateSpot(payload, spotId))
       .then((spot) => {
-        for (let i = 0; i < images.length; i++) {
-          let currObj = images[i]
-          if (currObj.url) {
-            dispatch(createImage(currObj, spot.id))
-          }
-        }
         history.push(`/spots/${spot.id}`)
       })
 
-    reset()
   }
 
   const checkErrors = (address, city, state, country, lat, lng, name, description, price, previewImage) => {
@@ -74,44 +71,56 @@ const CreateSpot = () => {
     if (!description || description.length < 30) errorList.push('Description needs 30 or more characters')
     if (!name) errorList.push('Name is required')
     if (!price) errorList.push('Price is required')
-    if (!previewImage) errorList.push('Preview image is required')
 
     return errorList
   }
 
-  const settingImages = (i1, i2, i3, i4, i5) => {
-    const images = []
-    images.push({ "url": i1, "preview": true })
-    images.push({ "url": i2, "preview": false })
-    images.push({ "url": i3, "preview": false })
-    images.push({ "url": i4, "preview": false })
-    images.push({ "url": i5, "preview": false })
-    return images
-  }
+  // const settingImages = (i1, i2, i3, i4, i5) => {
+  //   const images = []
+  //   images.push({ "url": i1, "preview": true })
+  //   images.push({ "url": i2, "preview": false })
+  //   images.push({ "url": i3, "preview": false })
+  //   images.push({ "url": i4, "preview": false })
+  //   images.push({ "url": i5, "preview": false })
+  //   return images
+  // }
 
   const reset = () => {
-    setAddress("")
-    setCity("")
-    setState("")
-    setCountry("")
-    setLat("")
-    setLng("")
-    setName("")
-    setDescription("")
-    setPrice("")
-    setPreviewImage("")
-    setImage2("")
-    setImage3("")
-    setImage4("")
-    setImage5("")
+    setAddress(spot?.address)
+    setCity(spot?.city)
+    setState(spot?.state)
+    setCountry(spot?.country)
+    setLat(spot?.lat)
+    setLng(spot?.lng)
+    setName(spot?.name)
+    setDescription(spot?.description)
+    setPrice(spot?.price)
+    // setPreviewImage("")
+    // setImage2("")
+    // setImage3("")
+    // setImage4("")
+    // setImage5("")
   }
+
+  useEffect(() => {
+    setAddress(spot?.address)
+    setCity(spot?.city)
+    setState(spot?.state)
+    setCountry(spot?.country)
+    setLat(spot?.lat)
+    setLng(spot?.lng)
+    setName(spot?.name)
+    setDescription(spot?.description)
+    setPrice(spot?.price)
+    dispatch(getSpotDetails(spotId))
+  }, [dispatch])
 
   return (
     <div>
       <ul className='errors'>
         {errors.length ? errors.map((error) => <li key={error}>{error}</li>) : ''}
       </ul>
-      <h1 className="spot-form-h1">Create your Spot</h1>
+      <h1 className="spot-form-h1">Update your Spot</h1>
       <h2 className="spot-form-h2">Where's your place located?</h2>
       <caption className="spot-caption-header">Guests will only get your exact address once they booked a reservation.</caption>
 
@@ -124,7 +133,6 @@ const CreateSpot = () => {
             className='country-input'
             id="country"
             type="text"
-            placeholder="Country"
             onChange={(e) => setCountry(e.target.value)}
             value={country}
           />
@@ -137,7 +145,6 @@ const CreateSpot = () => {
             className='country-input'
             id="address"
             type="text"
-            placeholder="Address"
             onChange={(e) => setAddress(e.target.value)}
             value={address}
           />
@@ -151,7 +158,6 @@ const CreateSpot = () => {
             <input
               id="city"
               type="text"
-              placeholder="City"
               onChange={(e) => setCity(e.target.value)}
               value={city}
             />, &nbsp;
@@ -163,7 +169,6 @@ const CreateSpot = () => {
             <input
               id="state"
               type="text"
-              placeholder="State"
               onChange={(e) => setState(e.target.value)}
               value={state}
             />
@@ -180,7 +185,6 @@ const CreateSpot = () => {
             <input
               id="lat"
               type="text"
-              placeholder="Latitude"
               onChange={(e) => setLat(e.target.value)}
               value={lat}
             />, &nbsp;
@@ -192,7 +196,6 @@ const CreateSpot = () => {
             <input
               id="lng"
               type="text"
-              placeholder="Longitude"
               onChange={(e) => setLng(e.target.value)}
               value={lng}
             />
@@ -209,7 +212,6 @@ const CreateSpot = () => {
           <textarea
             id="description"
             type="text"
-            placeholder="Description"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
           >
@@ -223,7 +225,6 @@ const CreateSpot = () => {
           <input
             id="name"
             type="text"
-            placeholder="Name of your spot"
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
@@ -237,19 +238,15 @@ const CreateSpot = () => {
           <input
             id="price"
             type="text"
-            placeholder="Price per night (USD)"
             onChange={(e) => setPrice(e.target.value)}
             value={price}
           />
         </div>
-
-
-
-        <div>
+        {/* <div>
           <h2>Liven up your spot with photos</h2>
-          <caption className='bottom-caption'>Submit a link to at least one photo to publish your spot</caption>
+          <caption>Submit a link to at least one photo to publish your spot</caption>
         </div>
-        <div className='image-inputs'>
+        <div>
           <div>
             <input
               id="image-1"
@@ -295,11 +292,11 @@ const CreateSpot = () => {
               value={image5}
             />
           </div>
-        </div>
-        <button className='submit-button'>Create Spot</button>
+        </div> */}
+        <button className="submit-button">Update your Spot</button>
       </form>
     </div>
   )
 }
 
-export default CreateSpot
+export default SpotUpdate

@@ -7,6 +7,7 @@ import GetSpots from '../GetSpots';
 import SpotDetails from '../SpotDetails'
 import CreateSpot from '../CreateSpot'
 import ManageSpots from '../ManageSpots';
+import SpotUpdate from '../SpotUpdate';
 import './Navigation.css';
 
 function Navigation({ isLoaded }) {
@@ -17,7 +18,7 @@ function Navigation({ isLoaded }) {
   return (
     <>
       <div className={navigationClass}>
-        <div>
+        <div className="home-link">
           <NavLink exact to="/" >
             <i className="fa-solid fa-house" />
             <span>Ant-BnB</span>
@@ -33,25 +34,28 @@ function Navigation({ isLoaded }) {
         )}
 
         {isLoaded && (
-          <div>
+          <div className='navigation-profile-button'>
             <ProfileButton user={sessionUser} />
           </div>
         )}
       </div>
-        <Switch>
-          <Route exact path="/">
-            <GetSpots />
-          </Route>
-          <Route path={"/spots/new"}>
-            <CreateSpot />
-          </Route>
-          <Route path={"/spots/manage"}>
-            <ManageSpots />
-          </Route>
-          <Route path={`/spots/:spotId`}>
-            <SpotDetails />
-          </Route>
-        </Switch>
+      <Switch>
+        <Route exact path="/">
+          <GetSpots />
+        </Route>
+        <Route path={"/spots/new"}>
+          <CreateSpot />
+        </Route>
+        <Route path={"/spots/manage"}>
+          <ManageSpots />
+        </Route>
+        <Route path={"/spots/:spotId/edit"}>
+          <SpotUpdate />
+        </Route>
+        <Route path={"/spots/:spotId"}>
+          <SpotDetails />
+        </Route>
+      </Switch>
 
     </>
   );
